@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Tabletop Games</string>
+    <string name="designersName">Designed by jml7540</string>
+    <string name="welcome">Welcome to Tabletop Games!!!</string>
+    <string name="profile_button">Manage Profile</string>
+    <string name="manage_accounts_button">Manage Accounts</string>
+    <string name="reservations_button">Reservations</string>
+    <string name="play_game_button">Play a Game</string>
+    <string name="title_activity_reservation">ReservationActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>
