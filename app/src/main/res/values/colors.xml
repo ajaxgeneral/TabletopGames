@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="comicred">#c23232</color>
+    <color name="comicrose">#f9789a</color>
+    <color name="blue">#077af5</color>
+    <color name="blue_faded">#5472f8</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#808080</color>
+    <color name="colorPrimary">#077af5</color>
+    <color name="colorPrimaryDark">#c23232</color>
+    <color name="colorAccent">#fdf7cf</color>
+
+</resources>
