@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'realm-android'
 }
 
 android {
@@ -18,7 +21,12 @@ android {
     }
 
     buildTypes {
+        def appID = "tabletopgames-suhrr"
+        debug{
+            buildConfigField "String", "MONGODB_REALM_ID", "\"${appID}\""
+        }
         release {
+            buildConfigField "String", "MONGODB_REALM_ID", "\"${appID}\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -32,7 +40,7 @@ android {
     }
 }
 
-
+realm{ syncEnabled = true }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

@@ -1,15 +1,14 @@
 package com.example.tabletopgames
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tabletopgames.models.Reservation
+import com.example.tabletopgames.models.User
+import io.realm.Realm
 
 class ReservationActivity : AppCompatActivity() {
     private var layoutManager: RecyclerView.LayoutManager? = null
@@ -18,6 +17,7 @@ class ReservationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         var text = "\t\t\t\t\t\t\t\t\t\tComing Soon," +
                 "\n\t\t\t\t\t\t\t\t\tAdd a Reservation!"
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reservation)
         setSupportActionBar(findViewById(R.id.toolbar))
@@ -30,8 +30,8 @@ class ReservationActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
-            Snackbar.make(view, text,Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            val startNewReservations = Intent(this, NewReservationActivity::class.java)
+            startActivity(startNewReservations)
         }
 
     }

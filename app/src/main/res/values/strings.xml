@@ -12,7 +12,29 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="date_text_view_label">Date</string>
+    <string name="time_text_view_label">Time</string>
+    <string name="duration_text_view_label">Duration</string>
+    <string name="game_type_text_view_label">Game</string>
+    <string name="table_text_view_label">Table</string>
+    <string name="seat_text_view_label">Seat</string>
+    <string name="email_text_view_label">Email</string>
+    <string name="firstName_text_view_label">First Name</string>
+    <string name="lastName_text_view_label">Last Name</string>
+    <string name="password_text_view_label">Password</string>
+    <string name="game_colon">Game: </string>
+    <string name="table_colon">Table: </string>
+    <string name="seat_colon">Seat: </string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="a_tabletop_game">A Tabletop Game</string>
+    <string name="a_table_selection">A Table Selection</string>
+    <string name="table">Table</string>
+    <string name="seat">Seat</string>
+    <string name="duration">Duration</string>
+    <string name="choose_reservation">Choose Reservation</string>
+    <string name="reservation">Reservation</string>
+    <string name="details_to_follow"><![CDATA[details to follow -->]]></string>
+    <string name="submit_reservation">Submit Reservation</string>
 </resources>
