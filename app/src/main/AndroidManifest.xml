@@ -3,6 +3,7 @@
     package="com.example.tabletopgames">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,18 +11,51 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TabletopGames">
         <activity
-            android:name=".ReservationActivity"
-            android:label="@string/title_activity_reservation"
-            android:theme="@style/Theme.TabletopGames.NoActionBar"></activity>
+            android:name=".views.Login"
+            android:exported="true"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        
         <activity
-            android:name=".SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".views.MyProfileView"
+            android:exported="true"
+            android:label="@string/title_activity_my_profile_view"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.NewMONOPentry"
+            android:exported="true"
+            android:label="@string/title_activity_new_monopentry"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.NewMTGentry"
+            android:exported="true"
+            android:label="@string/title_activity_new_mtgentry"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.NewDNDentry"
+            android:exported="true"
+            android:label="@string/title_activity_new_dndentry"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.NewLogSheet"
+            android:exported="true"
+            android:label="@string/title_activity_new_log_sheet"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.Home"
+            android:exported="true"
+            android:label="@string/title_activity_home"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.LogSheets"
+            android:exported="true"
+            android:label="@string/title_activity_log_sheets"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.Reservations"
+            android:exported="true"
+            android:label="@string/title_activity_reservations"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
