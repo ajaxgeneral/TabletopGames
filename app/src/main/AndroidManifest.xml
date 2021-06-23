@@ -11,11 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TabletopGames">
         <activity
+            android:name=".views.ReservationDetails"
+            android:exported="true"
+            android:label="@string/title_activity_reservation_details"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
             android:name=".views.Login"
             android:exported="true"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.TabletopGames.NoActionBar" />
-        
         <activity
             android:name=".views.MyProfileView"
             android:exported="true"

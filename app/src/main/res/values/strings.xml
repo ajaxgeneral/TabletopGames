@@ -67,4 +67,7 @@
     <string name="email">Email</string>
     <string name="createprofilebutton">Create Profile</string>
     <string name="title_activity_my_profile_view">MyProfileView</string>
+    <string name="title_activity_reservation_details">ReservationDetails</string>
+    <string name="reservationdetails">ReservationDetails</string>
+
 </resources>

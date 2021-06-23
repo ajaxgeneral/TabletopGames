@@ -145,7 +145,7 @@ private fun MainScreenContainer(
                 color = MaterialTheme.colors.background) {
         when(screenState.value){
             Screen.HomeScreen -> HomeView(viewModel)
-            Screen.ReservationsScreen -> ReservationsView(viewModel)
+            Screen.ReservationsScreen -> ReservationsListView(viewModel)
             Screen.LogSheetsScreen -> LogSheetsView(viewModel)
             Screen.NewLogSheetScreen -> NewLogSheetScreen(viewModel)
             Screen.NewDNDentryScreen -> NewDNDentry(viewModel)
@@ -153,6 +153,7 @@ private fun MainScreenContainer(
             Screen.NewMONOPentryScreen -> NewMONOPentry(viewModel)
             Screen.LoginScreen -> LoginView(viewModel)
             Screen.MyProfileScreen -> MyProfileView(viewModel)
+            Screen.ReservationDetailsScreen -> ReservationDetails(viewModel = viewModel)
         }
     }
 }

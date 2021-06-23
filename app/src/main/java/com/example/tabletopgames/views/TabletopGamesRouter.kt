@@ -14,6 +14,7 @@ sealed class Screen(val titleResId: Int){
     object NewMTGentryScreen: Screen(R.string.newmtgentry)
     object NewMONOPentryScreen: Screen(R.string.newmonopentry)
     object MyProfileScreen: Screen(R.string.profile)
+    object ReservationDetailsScreen: Screen(R.string.reservationdetails)
 }
 
 object Router{

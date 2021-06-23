@@ -3,11 +3,13 @@ package com.example.tabletopgames.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.tabletopgames.R
+import com.example.tabletopgames.models.GameType
 import com.example.tabletopgames.models.LoginModel
+import com.example.tabletopgames.models.Reservation
 import com.example.tabletopgames.views.Router
 import com.example.tabletopgames.views.Screen
 import io.realm.Realm
-import io.realm.RealmResults
 import java.util.*
 
 class MainViewModel() : ViewModel() {
@@ -16,6 +18,31 @@ class MainViewModel() : ViewModel() {
         Realm.getDefaultInstance()
     }
 
+    fun getImg(gameType: String): Int {
+        return when (gameType) {
+            GameType().DND -> R.drawable.dungeonsndragons
+            GameType().MTG -> R.drawable.magicthegathering
+            GameType().MONOP -> R.drawable.monopoly
+            else -> R.drawable.multiverselogo
+        }
+    }
+
+    val reservationsListOf = mutableListOf<Reservation>()
+    fun buildReservationList(){
+        reservationsListOf.add(
+            Reservation("1","1",GameType().DND,
+                "1 January 2021","7:00 PM","1",
+                "1","1"))
+        reservationsListOf.add(Reservation("2","1",GameType().DND,
+            "2 January 2021","6:00 PM","2",
+            "2","2"))
+        reservationsListOf.add(Reservation("3","1",GameType().MTG,
+            "3 January 2021","5:00 PM","3",
+            "3","3"))
+        reservationsListOf.add(Reservation("4","1",GameType().MONOP,
+            "4 January 2021","4:00 PM","4",
+            "4","4"))
+    }
 
     private val _email = MutableLiveData("")
     val email: LiveData<String> = _email
@@ -53,6 +80,10 @@ class MainViewModel() : ViewModel() {
         Router.navigateTo(Screen.LogSheetsScreen)
     }
 
+    fun onListItemClicked(){
+        Router.navigateTo(Screen.HomeScreen)
+    }
+
     private fun addNewLogin(email: String,password: String) {
 
         // create a Login object
@@ -67,6 +98,8 @@ class MainViewModel() : ViewModel() {
             }
 
     }
+
+
 
 
 }
