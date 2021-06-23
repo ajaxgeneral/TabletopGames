@@ -4,18 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.tabletopgames.R
 import com.example.tabletopgames.models.Reservation
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
@@ -38,7 +36,8 @@ class Reservations : ComponentActivity() {
 
 @Composable
 fun ReservationsListView(viewModel: MainViewModel) {
-    MyList(viewModel)
+    val scrollState = rememberScrollState()
+    MyList(scrollState,viewModel)
     //Text(text = "Hello World! It's the Reservations.")
     BackHandler() {
         Router.goBack()
@@ -46,29 +45,30 @@ fun ReservationsListView(viewModel: MainViewModel) {
 }
 
 @Composable
-fun MyList(viewModel: MainViewModel) {
+fun MyList(scrollState: ScrollState, viewModel: MainViewModel) {
     viewModel.buildReservationList()
-    ReservationList(viewModel)
+    ReservationList(scrollState, viewModel)
 }
 
 @Composable
-fun ReservationList(viewModel: MainViewModel) {
+fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
     val reservations = viewModel.reservationsListOf
-    Column {
+    Column(modifier = Modifier.verticalScroll(scrollState)) {
         reservations.forEach { reservation ->
             val img = viewModel.getImg(reservation.gameType)
-            ListItem(img,reservation)
+            ListItem(img,reservation,viewModel)
             Divider()
         }
     }
 }
 
 @Composable
-fun ListItem(img: Int,reservation: Reservation) {
-        Row(){
+fun ListItem(img: Int, reservation: Reservation, viewModel: MainViewModel) {
+        Row(modifier = Modifier.clickable { viewModel.onListItemClicked() }){
             Image(painter = painterResource(id = img),
                 contentDescription = null,
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center
             )
             Column() {
                 Text(text = reservation.gameType)
