@@ -6,18 +6,24 @@ import androidx.lifecycle.ViewModel
 import com.example.tabletopgames.R
 import com.example.tabletopgames.models.GameType
 import com.example.tabletopgames.models.LoginModel
+import com.example.tabletopgames.models.Profile
 import com.example.tabletopgames.models.Reservation
 import com.example.tabletopgames.views.Router
 import com.example.tabletopgames.views.Screen
 import io.realm.Realm
 import java.util.*
 
-class MainViewModel() : ViewModel() {
-
+open class MainViewModel() : ViewModel() {
+    // Realm Stuff
     val realm: Realm by lazy{
         Realm.getDefaultInstance()
     }
+    override fun onCleared() {
+        realm.close()
+        super.onCleared()
+    }
 
+    // helper
     fun getImg(gameType: String): Int {
         return when (gameType) {
             GameType().DND -> R.drawable.dungeonsndragons
@@ -27,6 +33,17 @@ class MainViewModel() : ViewModel() {
         }
     }
 
+    //profile stuff
+    private var p =  Profile("1","Test","Profile",
+                "test@gmail.com","8178675309")
+    var myProfile = p
+
+    fun getProfile(): Profile {
+        return myProfile
+    }
+
+
+    //reservation stuff
     val reservationsListOf = mutableListOf<Reservation>()
     fun buildReservationList(){
         reservationsListOf.add(
@@ -44,6 +61,7 @@ class MainViewModel() : ViewModel() {
             "4","4"))
     }
 
+    //login stuff
     private val _email = MutableLiveData("")
     val email: LiveData<String> = _email
     private val _password = MutableLiveData("")
@@ -57,17 +75,27 @@ class MainViewModel() : ViewModel() {
     }
 
     fun onLoginPressed(){
+        var newProfile = p
+        var found = false
         //search Realm for email/password
         //goto create profile if not found
-        var found = false
-        //var login = realm query function
-        //if(login)
+
+
+        // newProfile = profile realm where Login.email == Profile.email
+        //
             found=true//for testing
 
-        if (found) Router.navigateTo(Screen.HomeScreen)
-        else Router.navigateTo(Screen.MyProfileScreen)
+        if (found) {
+            myProfile = newProfile
+            Router.navigateTo(Screen.HomeScreen)
+        }
+        else {
+
+            Router.navigateTo(Screen.MyProfileScreen)
+        }
     }
 
+    //generic navigation functions
     fun onProfilePressed() {
         Router.navigateTo(Screen.MyProfileScreen)
     }
@@ -98,7 +126,6 @@ class MainViewModel() : ViewModel() {
             }
 
     }
-
 
 
 
