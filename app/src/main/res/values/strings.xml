@@ -69,5 +69,8 @@
     <string name="title_activity_my_profile_view">MyProfileView</string>
     <string name="title_activity_reservation_details">ReservationDetails</string>
     <string name="reservationdetails">ReservationDetails</string>
-
+    <string name="newreservation">NewReservation</string>
+    <string name="title_activity_edit_profile">EditProfile</string>
+    <string name="editprofile">EditProfile</string>
+    <string name="submitprofile">Submit Profile</string>
 </resources>

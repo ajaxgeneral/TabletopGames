@@ -15,6 +15,8 @@ sealed class Screen(val titleResId: Int){
     object NewMONOPentryScreen: Screen(R.string.newmonopentry)
     object MyProfileScreen: Screen(R.string.profile)
     object ReservationDetailsScreen: Screen(R.string.reservationdetails)
+    object NewReservationScreen: Screen(R.string.newreservation)
+    object EditProfileScreen: Screen(R.string.editprofile)
 }
 
 object Router{

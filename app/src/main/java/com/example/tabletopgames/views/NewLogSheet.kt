@@ -32,7 +32,7 @@ class NewLogSheet : ComponentActivity() {
 fun NewLogSheetScreen(viewModel: MainViewModel) {
     Text(text = "Hello World!")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 

@@ -32,7 +32,7 @@ class NewDNDentry : ComponentActivity() {
 fun NewDNDentry(viewModel: MainViewModel) {
     Text(text = "Hello World!")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 

@@ -50,7 +50,7 @@ fun LoginView(viewModel: MainViewModel) {
         MyLogo(viewModel)
     }
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 
@@ -81,7 +81,7 @@ fun MyButtonRow(viewModel: MainViewModel) {
             )
         }
         TextButton(onClick = {
-            viewModel.onProfilePressed()
+            viewModel.onCreateProfilePressed()
         },
             colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.comicred)),
             border = BorderStroke(

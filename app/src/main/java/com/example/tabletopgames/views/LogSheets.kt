@@ -31,7 +31,7 @@ class LogSheets : ComponentActivity() {
 fun LogSheetsView(viewModel: MainViewModel) {
     Text(text = "Hello World! This is the Log sheets View.")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 

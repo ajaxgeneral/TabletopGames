@@ -1,14 +1,19 @@
 package com.example.tabletopgames.views
 
 import android.os.Bundle
+import android.text.Layout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -45,10 +50,42 @@ fun MyProfileView(viewModel: MainViewModel) {
         Text(viewModel.myProfile.lastName, fontSize = 25.sp,color = Color.Black)
         Text(viewModel.myProfile.email, fontSize = 25.sp,color = Color.Black)
         Text(viewModel.myProfile.phone, fontSize = 25.sp,color = Color.Black)
+        Row(modifier = Modifier.fillMaxWidth(),
+            Arrangement.SpaceEvenly){
+            TextButton(onClick = {
+                viewModel.onEditProfilePressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.editprofile),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onHomeButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.home),
+                    color = Color.White
+                )
+            }
+        }
     }
     //Text(text = "Hello World! It's MyProfile")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 

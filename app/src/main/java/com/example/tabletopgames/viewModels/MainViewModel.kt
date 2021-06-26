@@ -24,6 +24,7 @@ open class MainViewModel() : ViewModel() {
     }
 
     // helper
+    var itemIndex = 0
     fun getImg(gameType: String): Int {
         return when (gameType) {
             GameType().DND -> R.drawable.dungeonsndragons
@@ -41,9 +42,50 @@ open class MainViewModel() : ViewModel() {
     fun getProfile(): Profile {
         return myProfile
     }
+    fun onEditProfilePressed(){
+        Router.navigateTo(Screen.EditProfileScreen)
+    }
+    fun onCreateProfilePressed(){
+        myLogin = LoginModel("","","Password")
+        myProfile = Profile("","First Name",
+            "Last Name","Email","Phone")
+        Router.navigateTo(Screen.EditProfileScreen)
+    }
+    fun onSubmitProfilePressed(){
+        //add new if creating profile
+        //update this if editing profile
+        myLogin.email = email.value.toString()
+        myLogin.password = password.value.toString()
+        myProfile.firstName = firstName.value.toString()
+        myProfile.lastName = lastName.value.toString()
+        myProfile.email = email.value.toString()
+        myProfile.phone = phone.value.toString()
+        Router.navigateTo(Screen.MyProfileScreen)
+    }
+    private val _firstName = MutableLiveData("")
+    val firstName: LiveData<String> = _firstName
+    private val _lastName = MutableLiveData("")
+    val lastName: LiveData<String> = _lastName
+    private val _phone = MutableLiveData("")
+    val phone: LiveData<String> = _phone
+
+    fun onPhoneChange(newPhone: String){
+        _phone.value = newPhone
+    }
+    fun onFirstNameChange(newEmail: String){
+        _firstName.value = newEmail
+    }
+    fun onLastNameChange(newPassword: String){
+        _lastName.value = newPassword
+    }
 
 
     //reservation stuff
+
+    fun onReservationListItemClicked(index: Int) {
+        itemIndex = index
+        Router.navigateTo(Screen.ReservationDetailsScreen)
+    }
     val reservationsListOf = mutableListOf<Reservation>()
     fun buildReservationList(){
         reservationsListOf.add(
@@ -62,6 +104,8 @@ open class MainViewModel() : ViewModel() {
     }
 
     //login stuff
+    private var l = LoginModel("1","test@gmail.com","password")
+    var myLogin = l
     private val _email = MutableLiveData("")
     val email: LiveData<String> = _email
     private val _password = MutableLiveData("")
@@ -76,26 +120,45 @@ open class MainViewModel() : ViewModel() {
 
     fun onLoginPressed(){
         var newProfile = p
+        var foundLogin = l
         var found = false
         //search Realm for email/password
         //goto create profile if not found
 
+        //foundLogin = login realm where email == email
+        // newProfile = profile realm where email == Profile.email
 
-        // newProfile = profile realm where Login.email == Profile.email
-        //
             found=true//for testing
 
         if (found) {
             myProfile = newProfile
+            myLogin = foundLogin
             Router.navigateTo(Screen.HomeScreen)
         }
         else {
-
-            Router.navigateTo(Screen.MyProfileScreen)
+            Router.navigateTo(Screen.EditProfileScreen)
         }
     }
 
+    private fun addNewLogin(email: String,password: String) {
+
+        // create a Login object
+        val id = Calendar.getInstance().timeInMillis.toString() +
+                " " + UUID.randomUUID().toString()
+        val newLogin = LoginModel(id,email, password)
+
+        // on below line we are calling a method to execute a transaction.
+        realm.executeTransactionAsync { realm -> // inside on execute method we are calling a method
+            // to copy to realm database from our modal class.
+            realm.copyToRealm(newLogin)
+        }
+
+    }
+
     //generic navigation functions
+    fun backButton(){
+        Router.goBack()
+    }
     fun onProfilePressed() {
         Router.navigateTo(Screen.MyProfileScreen)
     }
@@ -108,24 +171,11 @@ open class MainViewModel() : ViewModel() {
         Router.navigateTo(Screen.LogSheetsScreen)
     }
 
-    fun onListItemClicked(){
+    fun onHomeButtonPressed(){
         Router.navigateTo(Screen.HomeScreen)
     }
 
-    private fun addNewLogin(email: String,password: String) {
 
-        // create a Login object
-        val id = Calendar.getInstance().timeInMillis.toString() +
-        " " + UUID.randomUUID().toString()
-        val newLogin = LoginModel(id,email, password)
-
-        // on below line we are calling a method to execute a transaction.
-            realm.executeTransactionAsync { realm -> // inside on execute method we are calling a method
-                // to copy to realm database from our modal class.
-                realm.copyToRealm(newLogin)
-            }
-
-    }
 
 
 

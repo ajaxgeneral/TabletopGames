@@ -107,7 +107,7 @@ fun HomeView(viewModel: MainViewModel) {
     }
     //Text(text = "Hello World! Its Home view.")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 
 }

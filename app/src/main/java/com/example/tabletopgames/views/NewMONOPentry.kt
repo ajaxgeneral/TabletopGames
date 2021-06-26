@@ -32,7 +32,7 @@ class NewMONOPentry : ComponentActivity() {
 fun NewMONOPentry(viewModel: MainViewModel) {
     Text(text = "Hello World!")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 

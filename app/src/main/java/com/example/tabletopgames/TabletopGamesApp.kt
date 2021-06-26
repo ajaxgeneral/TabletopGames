@@ -154,6 +154,8 @@ private fun MainScreenContainer(
             Screen.LoginScreen -> LoginView(viewModel)
             Screen.MyProfileScreen -> MyProfileView(viewModel)
             Screen.ReservationDetailsScreen -> ReservationDetails(viewModel = viewModel)
+            Screen.NewReservationScreen -> NewReservation(viewModel)
+            Screen.EditProfileScreen -> EditProfile(viewModel)
         }
     }
 }

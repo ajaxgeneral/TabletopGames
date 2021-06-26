@@ -32,7 +32,7 @@ class NewMTGentry() : ComponentActivity() {
 fun NewMTGentry(viewModel: MainViewModel){
     Text(text = "Hello World! Its a new MTG entry.")
     BackHandler() {
-        Router.goBack()
+        viewModel.backButton()
     }
 }
 
