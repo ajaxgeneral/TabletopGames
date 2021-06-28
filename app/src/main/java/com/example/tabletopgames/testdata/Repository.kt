@@ -1,4 +1,4 @@
-package com.example.tabletopgames.models
+package com.example.tabletopgames.testdata
 
 
 class Repository {

@@ -4,10 +4,11 @@ data class DndAlLogSheet(
     var id: String,
     var profileID: String,
     var playerDCInumber: String,
+    var characterName: String,
     var characterRace: String,
-    var classesANDlevels: List<ClassesANDLevels>,
+    var classesANDlevels: String,
     var faction: String,
     var soulCoinsCarried: String,
     var soulCoinChargesUsed: String,
-    var logEntries: List<DndAlEntry>
+    var logEntries: String
 )
