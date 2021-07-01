@@ -56,7 +56,7 @@ fun EditProfile(viewModel: MainViewModel) {
         )
         Divider()
         TextField(
-        value = (firstNameq.value),
+        value = firstNameq.value,
         onValueChange = {
             firstNameq.value = it
             viewModel.onFirstNameChange(firstNameq.value)

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,21 +75,40 @@ fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
             ListItem(img,reservation,viewModel,reservations.indexOf(reservation))
             Divider()
         }
-        TextButton(onClick = {
-            viewModel.onHomeButtonPressed()
-        },
-            colors = ButtonDefaults.buttonColors(backgroundColor =
-            colorResource(id = R.color.comicred)),
-            border = BorderStroke(
-                1.dp,color = colorResource(id = R.color.comicrose)
-            ),
-            modifier = Modifier
-        ) {
-            Text(
-                text = stringResource(id = R.string.home),
-                color = Color.White
-            )
+        Row(modifier = Modifier.fillMaxWidth(),
+            Arrangement.SpaceEvenly){
+            TextButton(onClick = {
+                viewModel.onNewReservationButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.newreservationbutton),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onHomeButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.home),
+                    color = Color.White
+                )
+            }
         }
+
     }
 }
 

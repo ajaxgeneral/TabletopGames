@@ -11,6 +11,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TabletopGames">
         <activity
+            android:name=".views.MonopolyLogSheet"
+            android:exported="true"
+            android:label="@string/title_activity_monopoly_log_sheet"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.MtgLogSheet"
+            android:exported="true"
+            android:label="@string/title_activity_mtg_log_sheet"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.DndLogSheet"
+            android:exported="true"
+            android:label="@string/title_activity_dnd_log_sheet"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
             android:name=".views.EditProfile"
             android:exported="true"
             android:label="@string/title_activity_edit_profile"

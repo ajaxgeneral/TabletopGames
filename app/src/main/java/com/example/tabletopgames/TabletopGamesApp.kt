@@ -146,7 +146,7 @@ private fun MainScreenContainer(
         when(screenState.value){
             Screen.HomeScreen -> HomeView(viewModel)
             Screen.ReservationsScreen -> ReservationsListView(viewModel)
-            Screen.LogSheetsScreen -> LogSheetsView(viewModel)
+            Screen.LogSheetsScreen -> LogSheetsList(viewModel)
             Screen.NewLogSheetScreen -> NewLogSheetScreen(viewModel)
             Screen.NewDNDentryScreen -> NewDNDentry(viewModel)
             Screen.NewMTGentryScreen -> NewMTGentry(viewModel)
@@ -156,6 +156,9 @@ private fun MainScreenContainer(
             Screen.ReservationDetailsScreen -> ReservationDetails(viewModel = viewModel)
             Screen.NewReservationScreen -> NewReservation(viewModel)
             Screen.EditProfileScreen -> EditProfile(viewModel)
+            Screen.DndLogSheetScreen -> DndLogSheetItemView(viewModel)
+            Screen.MtgLogSheetScreen -> MtgLogSheetItemView(viewModel)
+            Screen.MonopolyLogSheetScreen -> MonopolyLogSheetItemView(viewModel)
         }
     }
 }

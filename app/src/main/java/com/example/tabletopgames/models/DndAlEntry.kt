@@ -2,6 +2,7 @@ package com.example.tabletopgames.models
 
 data class DndAlEntry(
     var id: String,
+    var profileID: String,
     var logsheetID: String,
     var adventureCode: String,
     var adventureName: String,
