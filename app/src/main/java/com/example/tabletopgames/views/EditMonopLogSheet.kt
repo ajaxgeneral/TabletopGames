@@ -2,7 +2,6 @@ package com.example.tabletopgames.views
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
-class NewMONOPentry : ComponentActivity() {
+class EditMonopLogSheet : ComponentActivity() {
     val viewModel = MainViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +19,7 @@ class NewMONOPentry : ComponentActivity() {
             TabletopGamesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    NewMONOPentry(viewModel)
+                    EditMonopLogSheetScreen(viewModel)
                 }
             }
         }
@@ -28,17 +27,14 @@ class NewMONOPentry : ComponentActivity() {
 }
 
 @Composable
-fun NewMONOPentry(viewModel: MainViewModel) {
-    Text(text = "Hello World!")
-    BackHandler() {
-        viewModel.backButton()
-    }
+fun EditMonopLogSheetScreen(viewModel: MainViewModel) {
+    Text("Hello World! This is the edit monopoly log sheet screen.")
 }
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview6() {
+fun EditMonopLogSheetScreenPreview() {
     TabletopGamesTheme {
-
+        EditMtgLogSheetScreen(viewModel = MainViewModel())
     }
 }

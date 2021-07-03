@@ -89,4 +89,23 @@
     <string name="monopolylogsheet">Monopoly Log Sheet</string>
     <string name="title_activity_monopoly_log_sheet">Monopoly Log Sheet</string>
     <string name="title_activity_mtg_log_sheet">Magic the Gathering Log Sheet</string>
+    <string name="editlogsheet">Edit Log Sheet</string>
+    <string name="editdndentry">Edit Dnd Entry</string>
+    <string name="editmtgentry">Edit Mtg Entry</string>
+    <string name="editmonopentry">Edit Monopoly Entry</string>
+    <string name="editdndlogsheet">Edit Dnd Log Sheet</string>
+    <string name="editmtglogsheeet">Edit Mtg Log Sheet Screen</string>
+    <string name="title_activity_edit_mtg_log_sheet">EditMtgLogSheet</string>
+    <string name="editmonoplogsheet">Edit Monopoly Log Sheet</string>
+    <string name="title_activity_edit_monop_log_sheet">Edit Monopoly Log Sheet</string>
+    <string name="newlogsheetbutton">New Log Sheet</string>
+    <string name="playerdcinumber">Player DCI Number</string>
+    <string name="charactername">Character Name</string>
+    <string name="classes">Classes</string>
+    <string name="faction">Faction</string>
+    <string name="souldcoinscarried">Soul Coins Carried</string>
+    <string name="souldcoinchargesused">Soul Coin Charges Used</string>
+    <string name="logsheetentries">Log Sheet Entries</string>
+    <string name="newentrybutton">New Entry</string>
+    <string name="characterrace">Character Race</string>
 </resources>

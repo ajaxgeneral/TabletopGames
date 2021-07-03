@@ -291,6 +291,7 @@ open class MainViewModel() : ViewModel() {
 
     // log sheet stuff
 
+    // getAllLogSheets from Realm where profileID == myProfile.id
     // getAllDndLogSheets from Realm where profileID == myProfile.id
     // for each DndLogSheet getAllDndEntries from Realm where logsheetID == dndAlLogSheet.id
     // getAllMtgLogSheets from Realm where profileID == myProfile.id
@@ -298,23 +299,76 @@ open class MainViewModel() : ViewModel() {
     // getAllMonopLogSheets from Realm where profileID == myProfile.id
     // for each monopLogSheet getAllMonopEntries from Realm where logsheetID == monopLogSheet.id
 
+    //These LogSheet items are created from all log sheet items.
+    //the LogSheet.id == DndAlLogSheet.id or MtgLogSheet.id or MonopLogSheet.id
+
+    // use RealmResults to build this list.
     var logSheetList: List<LogSheet> = listOf(
         LogSheet("1",myProfile.id,GameType().DND,"1 January 2021"),
         LogSheet("2",myProfile.id,GameType().MTG,"2 January 2021"),
         LogSheet("3",myProfile.id,GameType().MONOP,"3 January 2021")
     )
     var logSheetItem = LogSheet("","","","")
+    var logsheetItemIndex = -1
+
     fun onLogSheetItemClicked(index: Int){
         logSheetItem = logSheetList[index]
-
+        logsheetItemIndex = index
         when(logSheetItem.gameType){
             GameType().DND -> Router.navigateTo(Screen.DndLogSheetScreen)
             GameType().MTG -> Router.navigateTo(Screen.MtgLogSheetScreen)
             GameType().MONOP -> Router.navigateTo(Screen.MonopolyLogSheetScreen)
             else -> Router.navigateTo(Screen.HomeScreen)
         }
-
-
     }
 
+    var dndLogSheet = DndAlLogSheet("","",GameType().DND,"",
+        "","","","","","none",
+        "")
+
+    // use RealmResults to build this list
+    var dndLogSheets: List<DndAlLogSheet> = listOf(
+        DndAlLogSheet("1","1",GameType().DND,"12345678910",
+            "Ben Dover","Human","fighter;rogue;rogue","none","none","none",
+            "1:1;2:1")
+    )
+    var dndEntryItemIndex = -1
+    var dndLogSheetEntry = DndAlEntry("","","",
+        "","","",
+        "","","","",
+        "","","",
+        "","","",
+        "","","",
+        "","","")
+
+    // use RealmResults to build this list
+    var dndLogSheetEntries: List<DndAlEntry> = getDndEntries("1")
+
+
+    fun onDndEntryItemClicked(index: Int){
+        dndEntryItemIndex = index
+        dndLogSheetEntry = dndLogSheetEntries[index]
+        Router.navigateTo(Screen.EditDNDentryScreen)
+    }
+    fun onNewDndLogSheetButtonPressed(){
+        logsheetItemIndex = -1
+        Router.navigateTo(Screen.EditDndLogSheetScreen)
+    }
+    fun onNewDndEntryButtonPressed(){
+        dndEntryItemIndex = -1
+        Router.navigateTo(Screen.EditDNDentryScreen)
+    }
+    // test data for ui
+    private fun getDndEntries(logsheetID: String): MutableList<DndAlEntry> {
+        var dndEntryList = mutableListOf<DndAlEntry>()
+        for (i in 0 until (logsheetID.toInt()+3)){
+            dndEntryList.add(DndAlEntry((i+1).toString(),myProfile.id,logsheetID,"DDAL",
+                "Test Adventure "+(i+1).toString(),(i*3+1).toString()+" January 2021","testDM",
+                "1",(i*1000).toString(),(i*2).toString(),(i*3).toString(),
+                "Y",(i*1000).toString(),(i).toString(),(i+1).toString(),i.toString(),
+                (i*1000).toString(),((i+1)*2).toString(),((i+2)*2).toString(),
+                "This "+(i+1)+"was a blast!",i.toString(),i.toString()))
+        }
+        return dndEntryList
+    }
 }

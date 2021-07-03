@@ -20,7 +20,7 @@ class NewMTGentry() : ComponentActivity() {
             TabletopGamesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    NewMTGentry(viewModel)
+                    EditMTGentryScreen(viewModel)
                 }
             }
         }
@@ -28,7 +28,7 @@ class NewMTGentry() : ComponentActivity() {
 }
 
 @Composable
-fun NewMTGentry(viewModel: MainViewModel){
+fun EditMTGentryScreen(viewModel: MainViewModel){
     Text(text = "Hello World! Its a new MTG entry.")
     BackHandler() {
         viewModel.backButton()

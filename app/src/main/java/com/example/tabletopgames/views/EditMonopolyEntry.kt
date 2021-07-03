@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
-class NewDNDentry : ComponentActivity() {
+class NewMONOPentry : ComponentActivity() {
     val viewModel = MainViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +20,7 @@ class NewDNDentry : ComponentActivity() {
             TabletopGamesTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    NewDNDentry(viewModel)
+                    EditMONOPentryScreen(viewModel)
                 }
             }
         }
@@ -28,7 +28,7 @@ class NewDNDentry : ComponentActivity() {
 }
 
 @Composable
-fun NewDNDentry(viewModel: MainViewModel) {
+fun EditMONOPentryScreen(viewModel: MainViewModel) {
     Text(text = "Hello World!")
     BackHandler() {
         viewModel.backButton()
@@ -37,7 +37,7 @@ fun NewDNDentry(viewModel: MainViewModel) {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview4() {
+fun DefaultPreview6() {
     TabletopGamesTheme {
 
     }

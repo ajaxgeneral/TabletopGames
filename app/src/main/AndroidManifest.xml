@@ -11,6 +11,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TabletopGames">
         <activity
+            android:name=".views.EditMonopLogSheet"
+            android:exported="true"
+            android:label="@string/title_activity_edit_monop_log_sheet"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
+            android:name=".views.EditMtgLogSheet"
+            android:exported="true"
+            android:label="@string/title_activity_edit_mtg_log_sheet"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
             android:name=".views.MonopolyLogSheet"
             android:exported="true"
             android:label="@string/title_activity_monopoly_log_sheet"
