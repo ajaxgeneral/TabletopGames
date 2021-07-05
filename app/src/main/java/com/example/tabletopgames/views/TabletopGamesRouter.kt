@@ -22,6 +22,7 @@ sealed class Screen(val titleResId: Int){
     object DndLogSheetScreen: Screen(R.string.title_activity_dnd_log_sheet)
     object MtgLogSheetScreen: Screen(R.string.magiclogsheet)
     object MonopolyLogSheetScreen: Screen(R.string.monopolylogsheet)
+    object DndEntryScreen: Screen(R.string.dndentry)
 }
 
 object Router{

@@ -161,6 +161,7 @@ private fun MainScreenContainer(
             Screen.DndLogSheetScreen -> DndLogSheetItemView(viewModel)
             Screen.MtgLogSheetScreen -> MtgLogSheetItemView(viewModel)
             Screen.MonopolyLogSheetScreen -> MonopolyLogSheetItemView(viewModel)
+            Screen.DndEntryScreen -> DndEntryScreen(viewModel)
         }
     }
 }

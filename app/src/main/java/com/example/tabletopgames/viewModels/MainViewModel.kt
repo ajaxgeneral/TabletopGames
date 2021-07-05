@@ -139,9 +139,15 @@ open class MainViewModel() : ViewModel() {
     val seat: LiveData<String> = _seat
     private val _duration = MutableLiveData("")
     val duration: LiveData<String> =_duration
-    val reservationsListOf = mutableListOf<Reservation>()
+
+
     private val newReservation = Reservation("","","",
                 "","","","","")
+
+    //use RealmResults to build this list
+    // where profileID == MyProfile.id
+    val reservationsListOf = mutableListOf<Reservation>()
+
     fun onGameTypeChange(gameType: String){
         _gametype.value = gameType
     }
@@ -163,33 +169,18 @@ open class MainViewModel() : ViewModel() {
     fun onDurationChange(duration: String){
         _duration.value = duration
     }
-    fun buildReservationList(){
-        reservationsListOf.add(
-            Reservation("1","1",GameType().DND,
-                "1 January 2021","7:00 PM","1",
-                "1","1"))
-        reservationsListOf.add(Reservation("2","1",GameType().DND,
-            "2 January 2021","6:00 PM","2",
-            "2","2"))
-        reservationsListOf.add(Reservation("3","1",GameType().MTG,
-            "3 January 2021","5:00 PM","3",
-            "3","3"))
-        reservationsListOf.add(Reservation("4","1",GameType().MONOP,
-            "4 January 2021","4:00 PM","4",
-            "4","4"))
-    }
+
     private fun getNewResYear(day: String, month: String) : String{
         val cal = Calendar.getInstance()
-        var yearV = ""
+        val yearV: String
 
         val today = cal.get(Calendar.DAY_OF_MONTH)
         val thisMonth = cal.get(Calendar.MONTH)
         val thisYear = cal.get(Calendar.YEAR)
-        if (thisMonth==12 && month=="12" && today <= day.toInt()){
-            yearV = cal.add(thisYear, 1).toString()
-        }
-        else {
-            yearV = thisYear.toString()
+        yearV = if (thisMonth==12 && month=="12" && today <= day.toInt()){
+            cal.add(thisYear, 1).toString()
+        } else {
+            thisYear.toString()
         }
         return yearV
     }
@@ -237,6 +228,23 @@ open class MainViewModel() : ViewModel() {
     fun onReservationListItemClicked(index: Int) {
         itemIndex = index
         Router.navigateTo(Screen.ReservationDetailsScreen)
+    }
+
+    //test data for the ui
+    fun buildReservationList(){
+        reservationsListOf.add(
+            Reservation("1","1",GameType().DND,
+                "1 January 2021","7:00 PM","1",
+                "1","1"))
+        reservationsListOf.add(Reservation("2","1",GameType().DND,
+            "2 January 2021","6:00 PM","2",
+            "2","2"))
+        reservationsListOf.add(Reservation("3","1",GameType().MTG,
+            "3 January 2021","5:00 PM","3",
+            "3","3"))
+        reservationsListOf.add(Reservation("4","1",GameType().MONOP,
+            "4 January 2021","4:00 PM","4",
+            "4","4"))
     }
 
     //login stuff
@@ -303,60 +311,153 @@ open class MainViewModel() : ViewModel() {
     //the LogSheet.id == DndAlLogSheet.id or MtgLogSheet.id or MonopLogSheet.id
 
     // use RealmResults to build this list.
-    var logSheetList: List<LogSheet> = listOf(
-        LogSheet("1",myProfile.id,GameType().DND,"1 January 2021"),
-        LogSheet("2",myProfile.id,GameType().MTG,"2 January 2021"),
-        LogSheet("3",myProfile.id,GameType().MONOP,"3 January 2021")
-    )
+    var logSheetList = mutableListOf<LogSheet>()
+    fun buildLogSheetList(){
+        logSheetList.add(LogSheet("1",myProfile.id,GameType().DND,"1 January 2021"))
+        logSheetList.add(LogSheet("2",myProfile.id,GameType().MTG,"2 January 2021"))
+        logSheetList.add(LogSheet("3",myProfile.id,GameType().MONOP,"3 January 2021"))
+    }
+
+    //dnd log sheet text field values
+    private val _playerdcinumber = MutableLiveData("")
+    val playerdcinumber: LiveData<String> = _playerdcinumber
+    fun onPlayerDCInumberChanged(playerDCInumber: String){
+        _playerdcinumber.value = playerDCInumber
+    }
+    private val _charactername = MutableLiveData("")
+    val charactername: LiveData<String> = _charactername
+    fun onCharacterNameChange(name: String){
+        _charactername.value = name
+    }
+    private val _characterrace = MutableLiveData("")
+    val characterrace: LiveData<String> = _characterrace
+    fun onCharacterRaceChange(race: String){
+        _characterrace.value = race
+    }
+    //dndAlLogSheet.classes is calculated from the entries default is 'Fighter'
+
+    private val _faction = MutableLiveData("")
+    val faction: LiveData<String> = _faction
+    fun onFactionChange(faction: String){
+        _faction.value = faction
+    }
+    private val _soulcoinscarried = MutableLiveData("")
+    val soulcoinscarried: LiveData<String> = _soulcoinscarried
+    fun onSoulCoinsCarriedChange(coins: String){
+        _soulcoinscarried.value = coins
+    }
+    private val _soulcoinchargesused = MutableLiveData("")
+    val soulcoinchargesused: LiveData<String> = _soulcoinchargesused
+    fun onSoulCoinChargesUsedChange(used: String){
+        _soulcoinchargesused.value = used
+    }
+
     var logSheetItem = LogSheet("","","","")
     var logsheetItemIndex = -1
+
+    fun onNewDndLogSheetButtonPressed(){
+        logsheetItemIndex = -1
+        Router.navigateTo(Screen.EditDndLogSheetScreen)
+    }
+    fun onNewMtgLogSheetButtonPressed(){
+        logsheetItemIndex = -1
+        Router.navigateTo(Screen.EditMtgLogSheetScreen)
+    }
+    fun onNewMonopolyLogSheetButtonPressed(){
+        logsheetItemIndex = -1
+        Router.navigateTo(Screen.EditMonopLogSheetScreen)
+    }
+
+
 
     fun onLogSheetItemClicked(index: Int){
         logSheetItem = logSheetList[index]
         logsheetItemIndex = index
         when(logSheetItem.gameType){
-            GameType().DND -> Router.navigateTo(Screen.DndLogSheetScreen)
+            GameType().DND -> {
+                //dndLogSheet = dndLogSheets where id == logsheetID
+                var i = 0
+                dndLogSheets.forEach{ dndlogsheet ->
+
+                    if (logSheetList[index].id==dndlogsheet.id){
+                        dndLogSheet = dndlogsheet
+                        dndLogSheetIndex = i
+                    }
+                    i++
+                }
+                Router.navigateTo(Screen.DndLogSheetScreen)
+            }
             GameType().MTG -> Router.navigateTo(Screen.MtgLogSheetScreen)
             GameType().MONOP -> Router.navigateTo(Screen.MonopolyLogSheetScreen)
             else -> Router.navigateTo(Screen.HomeScreen)
         }
     }
 
-    var dndLogSheet = DndAlLogSheet("","",GameType().DND,"",
-        "","","","","","none",
-        "")
+    var dndLogSheetBlank = DndAlLogSheet("","",GameType().DND,"",
+    "","","","","","none",
+    "")
+    var dndLogSheet = dndLogSheetBlank
 
-    // use RealmResults to build this list
-    var dndLogSheets: List<DndAlLogSheet> = listOf(
-        DndAlLogSheet("1","1",GameType().DND,"12345678910",
-            "Ben Dover","Human","fighter;rogue;rogue","none","none","none",
-            "1:1;2:1")
-    )
     var dndEntryItemIndex = -1
-    var dndLogSheetEntry = DndAlEntry("","","",
+    var dndLogSheetEntryBlank = DndAlEntry("","","",
         "","","",
         "","","","",
         "","","",
         "","","",
         "","","",
         "","","")
+    var dndLogSheetEntry = dndLogSheetEntryBlank
+    fun onEditDndLogSheetButtonPressed(){
+        Router.navigateTo(Screen.EditDndLogSheetScreen)
+    }
+    fun onDeleteDndLogSheetButtonPressed(){
+        logSheetList.removeAt(logsheetItemIndex)
+        Router.navigateTo(Screen.LogSheetsScreen)
+    }
+    fun onSubmitDndLogSheetButtonPressed(){
+        // build a DndAlLogSheet object and copyToRealm
+
+        Router.navigateTo(Screen.LogSheetsScreen)
+    }
 
     // use RealmResults to build this list
-    var dndLogSheetEntries: List<DndAlEntry> = getDndEntries("1")
+    var dndLogSheets = mutableListOf<DndAlLogSheet>()
+    var dndLogSheetIndex = -1
+    fun buildDndLogSheets(){
+        dndLogSheets.add(DndAlLogSheet("1","1",GameType().DND,"12345678910",
+            "Ben Dover","Human","fighter;rogue;rogue","none","none","none",
+            "1:1;2:1"))
+    }
 
+    // user RealmResults to build this list
+    var dndLogSheetEntries = mutableListOf<DndAlEntry>()
+    fun buildDndEntries(){
+        dndLogSheetEntries = getDndEntries("1")
+    }
 
     fun onDndEntryItemClicked(index: Int){
         dndEntryItemIndex = index
         dndLogSheetEntry = dndLogSheetEntries[index]
-        Router.navigateTo(Screen.EditDNDentryScreen)
+        Router.navigateTo(Screen.DndEntryScreen)
     }
-    fun onNewDndLogSheetButtonPressed(){
-        logsheetItemIndex = -1
-        Router.navigateTo(Screen.EditDndLogSheetScreen)
-    }
+
     fun onNewDndEntryButtonPressed(){
         dndEntryItemIndex = -1
         Router.navigateTo(Screen.EditDNDentryScreen)
+    }
+    fun onEditDndEntryButtonPressed(){
+        Router.navigateTo(Screen.EditDNDentryScreen)
+    }
+    fun onDeleteDndEntryButtonPressed(){
+        //only allow delete of most recent entry
+        Router.navigateTo(Screen.DndLogSheetScreen)
+    }
+    fun onSubmitDndEntryButtonPressed(){
+        //get data from viewModel variables
+        //change object in list
+        //change RealmObject
+
+        Router.navigateTo(Screen.DndLogSheetScreen)
     }
     // test data for ui
     private fun getDndEntries(logsheetID: String): MutableList<DndAlEntry> {

@@ -5,10 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.Composable
@@ -19,9 +16,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.R
 import com.example.tabletopgames.models.*
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
@@ -44,6 +43,7 @@ class LogSheets : ComponentActivity() {
 @Composable
 fun LogSheetsList(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
+    if (viewModel.logSheetList.isEmpty()){ viewModel.buildLogSheetList() }
     val logsheets = viewModel.logSheetList
     Column(modifier = Modifier.padding(5.dp).fillMaxWidth()
         .verticalScroll(scrollState)){
@@ -51,6 +51,71 @@ fun LogSheetsList(viewModel: MainViewModel) {
             val img = viewModel.getImg(logsheet.gameType)
             LogSheetItem(img,logsheet,viewModel,logsheets.indexOf(logsheet))
             Divider()
+        }
+        Row(modifier = Modifier
+            .padding(15.dp).fillMaxWidth(),
+            Arrangement.SpaceEvenly
+            ){
+            TextButton(onClick = {
+                viewModel.onNewDndLogSheetButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.d_n_d),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onNewMtgLogSheetButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.m_t_g),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onNewMonopolyLogSheetButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.monopolybutton),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onHomeButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.home),
+                    color = Color.White
+                )
+            }
         }
     }
     //Text(text = "Hello World! This is the Log sheets View.")

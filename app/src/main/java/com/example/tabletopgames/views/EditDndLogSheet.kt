@@ -4,13 +4,28 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.R
+import com.example.tabletopgames.models.DndAlLogSheet
+import com.example.tabletopgames.models.GameType
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
+import kotlin.math.log
 
 class NewLogSheet : ComponentActivity() {
     val viewModel = MainViewModel()
@@ -29,7 +44,124 @@ class NewLogSheet : ComponentActivity() {
 
 @Composable
 fun EditDndLogSheetScreen(viewModel: MainViewModel) {
-    Text(text = "Hello World!")
+    val scrollState = rememberScrollState()
+    var logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex]
+    if(viewModel.logsheetItemIndex == -1){ logsheet = viewModel.dndLogSheetBlank }
+
+    val playerdcinumber = remember { mutableStateOf(logsheet.playerDCInumber) }
+    val charactername = remember { mutableStateOf(logsheet.characterName) }
+    val characterrace = remember { mutableStateOf(logsheet.characterRace) }
+    val faction = remember { mutableStateOf(logsheet.faction) }
+    val classes = remember { mutableStateOf(logsheet.classes)}
+    val soulcoinscarried = remember { mutableStateOf(logsheet.soulCoinsCarried) }
+    val soulcoinchargesused = remember { mutableStateOf(logsheet.soulCoinChargesUsed) }
+    Column(modifier = Modifier.padding(5.dp)
+        .fillMaxWidth().verticalScroll(scrollState)){
+        TextField(
+            value = playerdcinumber.value,
+            onValueChange = {
+                playerdcinumber.value = it
+                viewModel.onPlayerDCInumberChanged(playerdcinumber.value)
+            },
+            label = { Text(text = stringResource(R.string.playerdcinumber),fontSize = 25.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+                modifier = Modifier.fillMaxWidth()
+            ) }
+        )
+        TextField(
+            value = charactername.value,
+            onValueChange = {
+                charactername.value = it
+                viewModel.onCharacterNameChange(charactername.value)
+            },
+            label = { Text(text = stringResource(R.string.charactername),fontSize = 25.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+            modifier = Modifier.fillMaxWidth())}
+        )
+        TextField(
+            value = characterrace.value,
+            onValueChange = {
+                characterrace.value = it
+                viewModel.onCharacterRaceChange(characterrace.value)
+            },
+            label = { Text(text = stringResource(R.string.characterrace),fontSize = 30.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+                modifier = Modifier.fillMaxWidth()) }
+        )
+        TextField(
+            value = classes.value,
+            onValueChange = {
+                classes.value = logsheet.classes
+            },
+            label = { Text(text = stringResource(R.string.classes),fontSize = 30.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+                modifier = Modifier.fillMaxWidth()) }
+        )
+        TextField(
+            value = faction.value,
+            onValueChange = {
+                faction.value = it
+                viewModel.onFactionChange(faction.value)
+            },
+            label = { Text(text = stringResource(R.string.faction),fontSize = 30.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+                modifier = Modifier.fillMaxWidth()) }
+        )
+        TextField(
+            value = soulcoinscarried.value,
+            onValueChange = {
+                soulcoinscarried.value = it
+                viewModel.onSoulCoinsCarriedChange(soulcoinscarried.value)
+            },
+            label = { Text(text = stringResource(R.string.soulcoinscarried),fontSize = 30.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+                modifier = Modifier.fillMaxWidth()) }
+        )
+        TextField(
+            value = soulcoinchargesused.value,
+            onValueChange = {
+                soulcoinchargesused.value = it
+                viewModel.onSoulCoinChargesUsedChange(soulcoinchargesused.value)
+            },
+            label = { Text(text = stringResource(R.string.soulcoinchargesused),fontSize = 30.sp,
+                color = colorResource(R.color.colorPrimaryDark),
+                modifier = Modifier.fillMaxWidth()) }
+        )
+        Row(modifier = Modifier.fillMaxWidth(),
+            Arrangement.SpaceEvenly){
+            TextButton(onClick = {
+                viewModel.onSubmitDndLogSheetButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.submitbutton),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onHomeButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.home),
+                    color = Color.White
+                )
+            }
+        }
+    }
+    //Text(text = "Hello World! This is edit dnd log sheet screen.")
     BackHandler() {
         viewModel.backButton()
     }

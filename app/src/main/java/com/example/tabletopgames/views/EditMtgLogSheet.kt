@@ -2,6 +2,7 @@ package com.example.tabletopgames.views
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -29,6 +30,9 @@ class EditMtgLogSheet : ComponentActivity() {
 @Composable
 fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
     Text("Hello World! This is the edit mtg log sheet screen.")
+    BackHandler() {
+        viewModel.backButton()
+    }
 }
 
 @Preview(showBackground = true)

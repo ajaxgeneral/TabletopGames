@@ -108,4 +108,15 @@
     <string name="logsheetentries">Log Sheet Entries</string>
     <string name="newentrybutton">New Entry</string>
     <string name="characterrace">Character Race</string>
+    <string name="deletelogsheetbutton">Delete Log Sheet</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="d_n_d">DND+</string>
+    <string name="m_t_g">MTG+</string>
+    <string name="monopolybutton">Monopoly+</string>
+    <string name="soulcoinscarried">Soul Coins Carried</string>
+    <string name="soulcoinchargesused">Soul Coin Charges Used</string>
+    <string name="submitbutton">Submit</string>
+    <string name="title_activity_dnd_entry">DndEntry</string>
+    <string name="dndentry">Dnd Entry</string>
 </resources>
