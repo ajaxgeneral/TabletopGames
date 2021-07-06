@@ -334,7 +334,7 @@ open class MainViewModel() : ViewModel() {
     fun onCharacterRaceChange(race: String){
         _characterrace.value = race
     }
-    //dndAlLogSheet.classes is calculated from the entries default is 'Fighter'
+    //dndAlLogSheet.classes is calculated from the entries; the default is 'Fighter'
 
     private val _faction = MutableLiveData("")
     val faction: LiveData<String> = _faction
@@ -394,8 +394,7 @@ open class MainViewModel() : ViewModel() {
     }
 
     var dndLogSheetBlank = DndAlLogSheet("","",GameType().DND,"",
-    "","","","","","none",
-    "")
+    "","","","","")
     var dndLogSheet = dndLogSheetBlank
 
     var dndEntryItemIndex = -1
@@ -405,8 +404,103 @@ open class MainViewModel() : ViewModel() {
         "","","",
         "","","",
         "","","",
-        "","","")
+        "")
     var dndLogSheetEntry = dndLogSheetEntryBlank
+    private val _advname = MutableLiveData("")
+    val advname: LiveData<String> = _advname
+    fun onAdvNameChange(name: String){
+        _advname.value = name
+    }
+    private val _advcode = MutableLiveData("")
+    val advcode: LiveData<String> = _advcode
+    fun onAdvCodeChange(code: String){
+        _advcode.value = code
+    }
+    private val _dayMonthYear = MutableLiveData("")
+    val dayMonthYear: LiveData<String> = _dayMonthYear
+    fun onDayMonthYearChange(date: String){
+        _dayMonthYear.value = date
+    }
+    private val _dmdcinumber = MutableLiveData("")
+    val dmdcinumber: LiveData<String> = _dmdcinumber
+    fun onDmDciNumberChange(number: String){
+        _dmdcinumber.value = number
+    }
+    private val _levelaccepted = MutableLiveData("")
+    val levelaccepted: LiveData<String> = _levelaccepted
+    fun onLevelAcceptedChange(yn: String){
+        _levelaccepted.value = yn
+    }
+    private val _goldplusminus = MutableLiveData("")
+    val goldplusminus: LiveData<String> = _goldplusminus
+    fun onGoldPlusMinusChange(gold: String){
+        _goldplusminus.value = gold
+    }
+    private val _downtimeplusminus = MutableLiveData("")
+    val downtimeplusminus: LiveData<String> = _downtimeplusminus
+    fun onDowntimePlusMinusChange(downtime: String){
+        _downtimeplusminus.value = downtime
+    }
+    private  val _permanentmagicitemsplusminus = MutableLiveData("")
+    val permanentmagicitemsplusminus: LiveData<String> = _permanentmagicitemsplusminus
+    fun onPermanentMagicItemsPlusMinusChange(magicitems: String){
+        _permanentmagicitemsplusminus.value = magicitems
+    }
+    private val _newclass = MutableLiveData("")
+    val newclass: LiveData<String> = _newclass
+    fun onNewClassChange(newclass: String){
+        _newclass.value = newclass
+    }
+    private  val _advnotes = MutableLiveData("")
+    val advnotes: LiveData<String> = _advnotes
+    fun onAdvNotesChange(notes: String){
+        _advnotes.value = notes
+    }
+    fun getStartingLevel(logsheetID: String): String {
+        //create List of classes and count members
+        var classesRaw = ""
+        dndLogSheets.forEach { logsheet ->
+            if (logsheet.id==logsheetID){ classesRaw = logsheet.classes }
+        }
+        var classesList = classesRaw.split(";")
+        val startinglevel = classesList.count()
+        var startlevel = ""
+        if (startinglevel<=1){ startlevel = "1" }
+        else { startlevel = startinglevel.toString() }
+        return startlevel
+    }
+    fun getStartingGold(logsheetID: String): String{
+        var startgold = ""
+        var startinggold = 0
+        dndLogSheetEntries.forEach { entry ->
+            if (entry.logsheetID==logsheetID && entry.startingGold!=""){
+                startinggold += entry.startingGold.toInt() }
+        }
+        startgold = startinggold.toString()
+        return startgold
+    }
+    fun getStartingDowntime(logsheetID: String): String{
+        var startdowntime = ""
+        var startingdowntime = 0
+        dndLogSheetEntries.forEach { entry ->
+            if (entry.logsheetID==logsheetID && entry.startingGold!=""){
+                startingdowntime += entry.startingGold.toInt() }
+        }
+        startdowntime = startingdowntime.toString()
+        return startdowntime
+    }
+    fun getStartingMagicItems(logsheetID: String): String{
+        var startmagicitems = ""
+        var startingmagicitems = 0
+        dndLogSheetEntries.forEach { entry ->
+            if (entry.logsheetID==logsheetID && entry.startingGold!=""){
+                startingmagicitems += entry.startingGold.toInt() }
+        }
+        startmagicitems = startingmagicitems.toString()
+        return startmagicitems
+    }
+
+
     fun onEditDndLogSheetButtonPressed(){
         Router.navigateTo(Screen.EditDndLogSheetScreen)
     }
@@ -425,7 +519,7 @@ open class MainViewModel() : ViewModel() {
     var dndLogSheetIndex = -1
     fun buildDndLogSheets(){
         dndLogSheets.add(DndAlLogSheet("1","1",GameType().DND,"12345678910",
-            "Ben Dover","Human","fighter;rogue;rogue","none","none","none",
+            "Ben Dover","Human","fighter;rogue;rogue","none",
             "1:1;2:1"))
     }
 
@@ -439,6 +533,27 @@ open class MainViewModel() : ViewModel() {
         dndEntryItemIndex = index
         dndLogSheetEntry = dndLogSheetEntries[index]
         Router.navigateTo(Screen.DndEntryScreen)
+    }
+
+    fun getTotalGold(startgold: String, plusminus: String): String{
+        var startingGold = startgold.toInt()
+        var plusminus = plusminus.toInt()
+        var goldtotal = startingGold + plusminus
+        return goldtotal.toString()
+    }
+
+    fun getTotalDowntime(startdowntime: String, plusminus: String): String{
+        var startingDowntime = startdowntime.toInt()
+        var plusminus = plusminus.toInt()
+        var downtimetotal = startingDowntime + plusminus
+        return downtimetotal.toString()
+    }
+
+    fun getTotalPermanentMagicItems(startmagicitems: String, plusminus: String): String{
+        var startmagicitems = startmagicitems.toInt()
+        var plusminus = plusminus.toInt()
+        var magicitemstotal = startmagicitems + plusminus
+        return magicitemstotal.toString()
     }
 
     fun onNewDndEntryButtonPressed(){
@@ -466,9 +581,9 @@ open class MainViewModel() : ViewModel() {
             dndEntryList.add(DndAlEntry((i+1).toString(),myProfile.id,logsheetID,"DDAL",
                 "Test Adventure "+(i+1).toString(),(i*3+1).toString()+" January 2021","testDM",
                 "1",(i*1000).toString(),(i*2).toString(),(i*3).toString(),
-                "Y",(i*1000).toString(),(i).toString(),(i+1).toString(),i.toString(),
+                "Y",(i*1000).toString(),(i).toString(),(i+1).toString(),"none",
                 (i*1000).toString(),((i+1)*2).toString(),((i+2)*2).toString(),
-                "This "+(i+1)+"was a blast!",i.toString(),i.toString()))
+                "This "+(i+1)+"was a blast!"))
         }
         return dndEntryList
     }

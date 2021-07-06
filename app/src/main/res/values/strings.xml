@@ -119,4 +119,23 @@
     <string name="submitbutton">Submit</string>
     <string name="title_activity_dnd_entry">DndEntry</string>
     <string name="dndentry">Dnd Entry</string>
+    <string name="adventurename">Adventure Name</string>
+    <string name="adventurecode">Adventure Code</string>
+    <string name="daymonthyear">Day Month Year</string>
+    <string name="dmdcinumber">DM DCI Number</string>
+    <string name="levelaccepted">Level Accepted</string>
+    <string name="goldplusminus">Gold Plus Minus</string>
+    <string name="downtimeplusminus">Downtime Plus Minus</string>
+    <string name="permanentmagicitemsplusminus">Permanent Magic Items Plus Minus</string>
+    <string name="newclass">New Class</string>
+    <string name="adventurenotes">Adventure Notes</string>
+    <string name="startinglevel">Starting Level</string>
+    <string name="startinggold">Starting Gold</string>
+    <string name="startingdowntime">Starting Downtime</string>
+    <string name="startingmagicitems">Starting Magic Items</string>
+    <string name="editbutton">Edit</string>
+    <string name="goldtotal">Total Gold</string>
+    <string name="downtimetotal">Total Downtime</string>
+    <string name="permanentmagicitemstotal">Total Permanent Magic Items</string>
+    <string name="soulcoinchargesusedtotal">Total Soul Coin Charges Used</string>
 </resources>

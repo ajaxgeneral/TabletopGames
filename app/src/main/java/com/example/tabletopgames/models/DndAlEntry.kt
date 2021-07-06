@@ -20,7 +20,5 @@ data class DndAlEntry(
     var newGoldTotal: String,
     var newDowntimeTotal: String,
     var newPermanentMagicItemTotal: String,
-    var adventureNotes: String,
-    var soulCoinChargesUsed: String,
-    var newSoulCoinChargesUsedTotal: String
+    var adventureNotes: String
 )

@@ -86,25 +86,14 @@ fun DndLogSheetItemView(viewModel: MainViewModel) {
                 Text(logsheet.faction,fontSize = 15.sp,
                     color = colorResource(R.color.blue))
                 Divider()
-                Text(text = stringResource(R.string.soulcoinscarried),fontSize = 30.sp,
-                    color = colorResource(R.color.colorPrimaryDark))
-                Text(logsheet.soulCoinsCarried,fontSize = 15.sp,
-                    color = colorResource(R.color.blue))
-                Divider()
-                Text(text = stringResource(R.string.soulcoinchargesused),fontSize = 30.sp,
-                    color = colorResource(R.color.colorPrimaryDark))
-                Text(logsheet.soulCoinChargesUsed,fontSize = 15.sp,
-                    color = colorResource(R.color.blue))
-                Divider()
                 Text(text = stringResource(R.string.logsheetentries),fontSize = 25.sp,
                     color = colorResource(R.color.colorPrimaryDark),
                     style = TextStyle(textDecoration = TextDecoration.Underline)
                 )
-
             }
         }
         entries.forEach { entry ->
-            DndEntryItem(viewModel,entry,entries.indexOf(entry))
+            DndLogSheetEntryItem(viewModel,entry,entries.indexOf(entry))
             Divider()
         }
         Row(modifier = Modifier.fillMaxWidth(),
@@ -178,7 +167,7 @@ fun DndLogSheetItemView(viewModel: MainViewModel) {
 }
 
 @Composable
-fun DndEntryItem(viewModel: MainViewModel,entry: DndAlEntry, index: Int){
+fun DndLogSheetEntryItem(viewModel: MainViewModel,entry: DndAlEntry, index: Int){
     Column(modifier = Modifier
         .padding(5.dp).fillMaxWidth()
         .clickable { viewModel.onDndEntryItemClicked(index) }

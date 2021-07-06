@@ -9,7 +9,5 @@ open class DndAlLogSheet(
     var characterRace: String,
     var classes: String,
     var faction: String,
-    var soulCoinsCarried: String,
-    var soulCoinChargesUsed: String,
     var logEntries: String
 )

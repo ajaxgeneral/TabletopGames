@@ -53,8 +53,6 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
     val characterrace = remember { mutableStateOf(logsheet.characterRace) }
     val faction = remember { mutableStateOf(logsheet.faction) }
     val classes = remember { mutableStateOf(logsheet.classes)}
-    val soulcoinscarried = remember { mutableStateOf(logsheet.soulCoinsCarried) }
-    val soulcoinchargesused = remember { mutableStateOf(logsheet.soulCoinChargesUsed) }
     Column(modifier = Modifier.padding(5.dp)
         .fillMaxWidth().verticalScroll(scrollState)){
         TextField(
@@ -107,26 +105,7 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
                 color = colorResource(R.color.colorPrimaryDark),
                 modifier = Modifier.fillMaxWidth()) }
         )
-        TextField(
-            value = soulcoinscarried.value,
-            onValueChange = {
-                soulcoinscarried.value = it
-                viewModel.onSoulCoinsCarriedChange(soulcoinscarried.value)
-            },
-            label = { Text(text = stringResource(R.string.soulcoinscarried),fontSize = 30.sp,
-                color = colorResource(R.color.colorPrimaryDark),
-                modifier = Modifier.fillMaxWidth()) }
-        )
-        TextField(
-            value = soulcoinchargesused.value,
-            onValueChange = {
-                soulcoinchargesused.value = it
-                viewModel.onSoulCoinChargesUsedChange(soulcoinchargesused.value)
-            },
-            label = { Text(text = stringResource(R.string.soulcoinchargesused),fontSize = 30.sp,
-                color = colorResource(R.color.colorPrimaryDark),
-                modifier = Modifier.fillMaxWidth()) }
-        )
+
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){
             TextButton(onClick = {
