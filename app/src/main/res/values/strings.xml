@@ -138,4 +138,13 @@
     <string name="downtimetotal">Total Downtime</string>
     <string name="permanentmagicitemstotal">Total Permanent Magic Items</string>
     <string name="soulcoinchargesusedtotal">Total Soul Coin Charges Used</string>
+    <string name="gametype">Game Type</string>
+    <string name="datecreated">Date Created</string>
+    <string name="players">Players</string>
+    <string name="winner">Winner</string>
+    <string name="winners">Winners</string>
+    <string name="games">Games</string>
+    <string name="title_activity_mtg_entry">MtgEntry</string>
+    <string name="mtgentry">Magic the Gathering Entry</string>
+    <string name="mtgentrywinnertext"> was the winner of game </string>
 </resources>

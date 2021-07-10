@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.tabletopgames.R
 import com.example.tabletopgames.models.*
+import com.example.tabletopgames.views.LogSheetsList
 import com.example.tabletopgames.views.Router
 import com.example.tabletopgames.views.Screen
 import io.realm.Realm
@@ -141,7 +142,7 @@ open class MainViewModel() : ViewModel() {
     val duration: LiveData<String> =_duration
 
 
-    private val newReservation = Reservation("","","",
+    private var newReservation = Reservation("","","",
                 "","","","","")
 
     //use RealmResults to build this list
@@ -190,6 +191,10 @@ open class MainViewModel() : ViewModel() {
         val year = getNewResYear(dayV,monthV)
         val dayMonthYear = dayV + " " + getMonthName(monthV) + " " + year
         if (itemIndex==-1){
+            newReservation = Reservation(getNewID(),myProfile.id,gametype.value.toString(),
+                dayMonthYear,time.value.toString(),table.value.toString(),seat.value.toString(),
+                duration.value.toString())
+            /*
             newReservation.gameType = gametype.value.toString()
             newReservation.dayMonthYear = dayMonthYear
             newReservation.table = table.value.toString()
@@ -197,6 +202,7 @@ open class MainViewModel() : ViewModel() {
             newReservation.duration = duration.value.toString()
             newReservation.profileID = myProfile.id
             newReservation.id = getNewID()
+            */
             //if no reservation with this date, time, and location exists
             //then add to Reservation Realm and add to reservationsListOf
 
@@ -208,6 +214,7 @@ open class MainViewModel() : ViewModel() {
             reservationsListOf[itemIndex].table = table.value.toString()
             reservationsListOf[itemIndex].seat = seat.value.toString()
             reservationsListOf[itemIndex].duration = duration.value.toString()
+            reservationsListOf[itemIndex].time = time.value.toString()
         }
         Router.navigateTo(Screen.ReservationsScreen)
     }
@@ -341,22 +348,12 @@ open class MainViewModel() : ViewModel() {
     fun onFactionChange(faction: String){
         _faction.value = faction
     }
-    private val _soulcoinscarried = MutableLiveData("")
-    val soulcoinscarried: LiveData<String> = _soulcoinscarried
-    fun onSoulCoinsCarriedChange(coins: String){
-        _soulcoinscarried.value = coins
-    }
-    private val _soulcoinchargesused = MutableLiveData("")
-    val soulcoinchargesused: LiveData<String> = _soulcoinchargesused
-    fun onSoulCoinChargesUsedChange(used: String){
-        _soulcoinchargesused.value = used
-    }
 
     var logSheetItem = LogSheet("","","","")
     var logsheetItemIndex = -1
 
     fun onNewDndLogSheetButtonPressed(){
-        logsheetItemIndex = -1
+        dndLogSheetItemIndex = -1
         Router.navigateTo(Screen.EditDndLogSheetScreen)
     }
     fun onNewMtgLogSheetButtonPressed(){
@@ -368,8 +365,6 @@ open class MainViewModel() : ViewModel() {
         Router.navigateTo(Screen.EditMonopLogSheetScreen)
     }
 
-
-
     fun onLogSheetItemClicked(index: Int){
         logSheetItem = logSheetList[index]
         logsheetItemIndex = index
@@ -379,7 +374,7 @@ open class MainViewModel() : ViewModel() {
                 var i = 0
                 dndLogSheets.forEach{ dndlogsheet ->
 
-                    if (logSheetList[index].id==dndlogsheet.id){
+                    if (logSheetItem.id==dndlogsheet.id){
                         dndLogSheet = dndlogsheet
                         dndLogSheetIndex = i
                     }
@@ -387,8 +382,20 @@ open class MainViewModel() : ViewModel() {
                 }
                 Router.navigateTo(Screen.DndLogSheetScreen)
             }
-            GameType().MTG -> Router.navigateTo(Screen.MtgLogSheetScreen)
-            GameType().MONOP -> Router.navigateTo(Screen.MonopolyLogSheetScreen)
+            GameType().MTG -> {
+                var i = 0
+                mtgLogSheets.forEach{ mtglogsheet ->
+                    if(logSheetItem.id == mtglogsheet.id){
+                        mtgLogSheet = mtglogsheet
+                        mtgLogSheetIndex = i
+                    }
+                    i++
+                }
+                Router.navigateTo(Screen.MtgLogSheetScreen)
+            }
+            GameType().MONOP -> {
+                Router.navigateTo(Screen.MonopolyLogSheetScreen)
+            }
             else -> Router.navigateTo(Screen.HomeScreen)
         }
     }
@@ -396,7 +403,7 @@ open class MainViewModel() : ViewModel() {
     var dndLogSheetBlank = DndAlLogSheet("","",GameType().DND,"",
     "","","","","")
     var dndLogSheet = dndLogSheetBlank
-
+    var dndLogSheetItemIndex = -1
     var dndEntryItemIndex = -1
     var dndLogSheetEntryBlank = DndAlEntry("","","",
         "","","",
@@ -505,6 +512,7 @@ open class MainViewModel() : ViewModel() {
         Router.navigateTo(Screen.EditDndLogSheetScreen)
     }
     fun onDeleteDndLogSheetButtonPressed(){
+        dndLogSheets.removeAt(dndLogSheetIndex)
         logSheetList.removeAt(logsheetItemIndex)
         Router.navigateTo(Screen.LogSheetsScreen)
     }
@@ -536,23 +544,23 @@ open class MainViewModel() : ViewModel() {
     }
 
     fun getTotalGold(startgold: String, plusminus: String): String{
-        var startingGold = startgold.toInt()
-        var plusminus = plusminus.toInt()
-        var goldtotal = startingGold + plusminus
+        val startingGold = startgold.toInt()
+        val plusminus = plusminus.toInt()
+        val goldtotal = startingGold + plusminus
         return goldtotal.toString()
     }
 
     fun getTotalDowntime(startdowntime: String, plusminus: String): String{
-        var startingDowntime = startdowntime.toInt()
-        var plusminus = plusminus.toInt()
-        var downtimetotal = startingDowntime + plusminus
+        val startingDowntime = startdowntime.toInt()
+        val plusminus = plusminus.toInt()
+        val downtimetotal = startingDowntime + plusminus
         return downtimetotal.toString()
     }
 
     fun getTotalPermanentMagicItems(startmagicitems: String, plusminus: String): String{
-        var startmagicitems = startmagicitems.toInt()
-        var plusminus = plusminus.toInt()
-        var magicitemstotal = startmagicitems + plusminus
+        val startmagicitems = startmagicitems.toInt()
+        val plusminus = plusminus.toInt()
+        val magicitemstotal = startmagicitems + plusminus
         return magicitemstotal.toString()
     }
 
@@ -576,7 +584,7 @@ open class MainViewModel() : ViewModel() {
     }
     // test data for ui
     private fun getDndEntries(logsheetID: String): MutableList<DndAlEntry> {
-        var dndEntryList = mutableListOf<DndAlEntry>()
+        val dndEntryList = mutableListOf<DndAlEntry>()
         for (i in 0 until (logsheetID.toInt()+3)){
             dndEntryList.add(DndAlEntry((i+1).toString(),myProfile.id,logsheetID,"DDAL",
                 "Test Adventure "+(i+1).toString(),(i*3+1).toString()+" January 2021","testDM",
@@ -586,5 +594,106 @@ open class MainViewModel() : ViewModel() {
                 "This "+(i+1)+"was a blast!"))
         }
         return dndEntryList
+    }
+
+    //mtg log sheet stuff
+    //use RealmResults to build this list
+    var mtgLogSheetBlank = MTGlogsheet("","",GameType().MTG,
+            "","","")
+    var mtgLogSheets = mutableListOf<MTGlogsheet>()
+    var mtgLogSheetEntries = mutableListOf<MtgEntry>()
+    var mtgLogSheetEntryBlank = MtgEntry("","","")
+    var mtgLogSheetEntry = mtgLogSheetEntryBlank
+    var mtgLogSheet = mtgLogSheetBlank
+    var mtgLogSheetIndex = -1
+    var mtgEntryItemIndex = -1
+    private var _winner = MutableLiveData("")
+    var winner: LiveData<String> = _winner
+    fun onWinnerChange(winner: String){
+        _winner.value = winner
+    }
+    fun buildMtgLogSheets(){
+        mtgLogSheets.add(MTGlogsheet("2",myProfile.id,GameType().MTG,
+            players,"2 January 2021",mtgEntries))
+
+    }
+    var mtgEntries = ""
+    fun onNewMtgLogSheetEntryButtonPressed(){
+        mtgEntryItemIndex = -1
+        Router.navigateTo(Screen.EditMTGentryScreen)
+    }
+    fun onEditMtgLogSheetButtonPressed(){
+        Router.navigateTo(Screen.EditMtgLogSheetScreen)
+    }
+    fun onDeleteMtgLogSheetButtonPressed(){
+        mtgLogSheets.removeAt(mtgLogSheetIndex)
+        logSheetList.removeAt(logsheetItemIndex)
+        Router.navigateTo(Screen.LogSheetsScreen)
+    }
+    fun buildMtgLogSheetEntries(){
+        mtgLogSheetEntries.add(MtgEntry("1","1",testListOfPlayers[1]))
+        mtgLogSheetEntries.add(MtgEntry("2","1",testListOfPlayers[2]))
+        mtgLogSheetEntries.add(MtgEntry("3","1",testListOfPlayers[0]))
+        mtgLogSheetEntries.forEach{ entry ->
+            mtgEntries = entry.id+":"+entry.logsheetID+";"
+        }
+    }
+
+    var players = ""
+    var magicGameNumber = 1
+    var testListOfPlayers = mutableListOf<String>()
+    fun buildPlayersList() {
+        testListOfPlayers.add("Jon Donnson")
+        testListOfPlayers.add("Judy Patutti")
+        testListOfPlayers.add("Claude Bawls")
+        testListOfPlayers.add("I.P. Freehly")
+        testListOfPlayers.forEach { player ->
+            players += player+";"
+        }
+    }
+    fun onMtgEntryItemClicked(index: Int,count: Int){
+        mtgEntryItemIndex = index
+        magicGameNumber = count
+        mtgLogSheetEntry = mtgLogSheetEntries[index]
+        Router.navigateTo(Screen.MtgEntryScreen)
+    }
+
+    fun onEditMtgEntryButtonPressed(){
+        Router.navigateTo(Screen.EditMTGentryScreen)
+    }
+
+    fun onDeleteMtgEntryButtonPressed(){
+        //delete from Realm and local list
+        mtgLogSheetEntries.removeAt(mtgEntryItemIndex)
+        Router.navigateTo(Screen.MtgLogSheetScreen)
+    }
+
+    fun onSubmitMtgEntryButtonPressed(){
+        //update Realm and mtgLogSheetEntries
+        mtgLogSheetEntries[mtgEntryItemIndex].winner = winner.toString()
+        Router.navigateTo(Screen.MtgLogSheetScreen)
+    }
+/*
+    private    fun buildMonopolyLogSheetsList(){
+        testListOfMonopolyLogSheets.add(
+            MonopolyLogSheet("1","1",
+                getTestPlayerList(),getMonopolyEntries("1",getTestPlayerList())))
+        testListOfMonopolyLogSheets.add(
+            MonopolyLogSheet("2","1",
+                getTestPlayerList(),getMonopolyEntries("2",getTestPlayerList())))
+        testListOfMonopolyLogSheets.add(
+            MonopolyLogSheet("3","1",
+                getTestPlayerList(),getMonopolyEntries("3",getTestPlayerList())))
+    }
+*/
+    private fun getMonopolyEntries(logsheetID: String,testPlayerList:List<String>): MutableList<MonopolyEntry> {
+        var monopEntryList = mutableListOf<MonopolyEntry>()
+
+        for (i in 1 until testPlayerList.size){
+            var winner = testPlayerList[i]
+            monopEntryList.add(MonopolyEntry(i.toString(),logsheetID,winner))
+        }
+
+        return monopEntryList
     }
 }

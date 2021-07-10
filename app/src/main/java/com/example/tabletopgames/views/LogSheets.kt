@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +45,15 @@ class LogSheets : ComponentActivity() {
 fun LogSheetsList(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     if (viewModel.logSheetList.isEmpty()){ viewModel.buildLogSheetList() }
-    val logsheets = viewModel.logSheetList
+    if (viewModel.dndLogSheets.isEmpty()){
+        viewModel.buildDndLogSheets()
+        viewModel.buildDndEntries()
+    }
+    if (viewModel.testListOfPlayers.isEmpty()){ viewModel.buildPlayersList() }
+    if (viewModel.mtgLogSheetEntries.isEmpty()){ viewModel.buildMtgLogSheetEntries() }
+    if (viewModel.mtgLogSheets.isEmpty()){ viewModel.buildMtgLogSheets() }
+
+    val logsheets = remember { viewModel.logSheetList }
     Column(modifier = Modifier.padding(5.dp).fillMaxWidth()
         .verticalScroll(scrollState)){
         logsheets.forEach{ logsheet ->

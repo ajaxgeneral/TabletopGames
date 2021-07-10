@@ -11,6 +11,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -44,13 +45,12 @@ class DndLogSheet : ComponentActivity() {
 @Composable
 fun DndLogSheetItemView(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    if (viewModel.dndLogSheets.isEmpty()){
-        viewModel.buildDndLogSheets()
-        viewModel.buildDndEntries()
+    var logsheet = remember { viewModel.dndLogSheetBlank }
+    if (viewModel.logsheetItemIndex != -1 ){
+        logsheet = viewModel.dndLogSheets[viewModel.dndLogSheetIndex]
     }
-    val logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex]
-    if (viewModel.dndLogSheetEntries.isEmpty()){ viewModel.buildDndEntries() }
-    val entries = viewModel.dndLogSheetEntries
+    val entries = remember { viewModel.dndLogSheetEntries }
+
     Column(modifier = Modifier
         .padding(5.dp)
         .background(color = colorResource(id = R.color.colorAccent))

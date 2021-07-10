@@ -45,8 +45,9 @@ class NewDNDentry : ComponentActivity() {
 @Composable
 fun EditDNDentryScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    var dndentry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex]
-    if (viewModel.dndEntryItemIndex==-1){ dndentry = viewModel.dndLogSheetEntryBlank }
+    var dndentry = remember { viewModel.dndLogSheetEntryBlank }
+    if (viewModel.dndEntryItemIndex!=-1){
+        dndentry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex] }
     val advname = remember { mutableStateOf(dndentry.adventureName) }
     val advcode = remember { mutableStateOf(dndentry.adventureCode) }
     val dayMonthYear = remember { mutableStateOf(dndentry.dayMonthYear) }

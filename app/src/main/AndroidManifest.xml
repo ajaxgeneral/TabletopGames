@@ -11,6 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TabletopGames">
         <activity
+            android:name=".views.MtgEntry"
+            android:exported="true"
+            android:label="@string/title_activity_mtg_entry"
+            android:theme="@style/Theme.TabletopGames.NoActionBar" />
+        <activity
             android:name=".views.DndEntry"
             android:exported="true"
             android:label="@string/title_activity_dnd_entry"

@@ -45,9 +45,8 @@ class NewLogSheet : ComponentActivity() {
 @Composable
 fun EditDndLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    var logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex]
-    if(viewModel.logsheetItemIndex == -1){ logsheet = viewModel.dndLogSheetBlank }
-
+    var logsheet  = viewModel.dndLogSheetBlank
+    if(viewModel.dndLogSheetItemIndex != -1){ viewModel.dndLogSheets[viewModel.logsheetItemIndex] }
     val playerdcinumber = remember { mutableStateOf(logsheet.playerDCInumber) }
     val charactername = remember { mutableStateOf(logsheet.characterName) }
     val characterrace = remember { mutableStateOf(logsheet.characterRace) }
