@@ -1,8 +1,8 @@
 package com.example.tabletopgames.models
 
 open class LogSheet(
-    val id: String,
-    val profileID: String,
-    val gameType: String,
-    val dateCreated: String
+    var id: String,
+    var profileID: String,
+    var gameType: String,
+    var dateCreated: String
 )

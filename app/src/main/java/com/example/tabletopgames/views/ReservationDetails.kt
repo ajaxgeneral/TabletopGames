@@ -7,9 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +38,7 @@ class ReservationDetails : ComponentActivity() {
 
 @Composable
 fun ReservationDetails(viewModel: MainViewModel) {
-    val reservation = viewModel.reservationsListOf[viewModel.itemIndex]
+    val reservation = viewModel.reservationsListOf[viewModel.reservationsItemIndex]
     val painter = viewModel.getImg(reservation.gameType)
     val contentDescription = reservation.gameType
     Column(verticalArrangement = Arrangement.SpaceBetween,

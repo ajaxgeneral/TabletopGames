@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -45,8 +44,9 @@ class NewLogSheet : ComponentActivity() {
 @Composable
 fun EditDndLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    var logsheet  = viewModel.dndLogSheetBlank
-    if(viewModel.dndLogSheetItemIndex != -1){ viewModel.dndLogSheets[viewModel.logsheetItemIndex] }
+    var logsheet  = remember { viewModel.dndLogSheetBlank }
+    if(viewModel.dndLogSheetItemIndex != -1){
+        logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex] }
     val playerdcinumber = remember { mutableStateOf(logsheet.playerDCInumber) }
     val charactername = remember { mutableStateOf(logsheet.characterName) }
     val characterrace = remember { mutableStateOf(logsheet.characterRace) }
@@ -85,15 +85,21 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
                 color = colorResource(R.color.colorPrimaryDark),
                 modifier = Modifier.fillMaxWidth()) }
         )
-        TextField(
-            value = classes.value,
-            onValueChange = {
-                classes.value = logsheet.classes
-            },
-            label = { Text(text = stringResource(R.string.classes),fontSize = 30.sp,
-                color = colorResource(R.color.colorPrimaryDark),
-                modifier = Modifier.fillMaxWidth()) }
-        )
+        if(viewModel.dndLogSheetItemIndex==-1){
+            TextField(
+                value = classes.value,
+                onValueChange = {
+                    classes.value = it
+                    viewModel.onClassChange(classes.value)
+                },
+                label = { Text(text = stringResource(R.string.startingclass),fontSize = 30.sp,
+                    color = colorResource(R.color.colorPrimaryDark),
+                    modifier = Modifier.fillMaxWidth()) }
+            )
+        }else{
+            Text(logsheet.classes,fontSize = 30.sp,
+                color = colorResource(R.color.colorPrimaryDark))
+        }
         TextField(
             value = faction.value,
             onValueChange = {

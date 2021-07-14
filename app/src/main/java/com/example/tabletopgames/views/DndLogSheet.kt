@@ -46,11 +46,11 @@ class DndLogSheet : ComponentActivity() {
 fun DndLogSheetItemView(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet = remember { viewModel.dndLogSheetBlank }
+    var entries = remember { viewModel.dndLogSheetEntriesEmpty }
     if (viewModel.logsheetItemIndex != -1 ){
         logsheet = viewModel.dndLogSheets[viewModel.dndLogSheetIndex]
+        entries = viewModel.dndLogSheetEntries
     }
-    val entries = remember { viewModel.dndLogSheetEntries }
-
     Column(modifier = Modifier
         .padding(5.dp)
         .background(color = colorResource(id = R.color.colorAccent))

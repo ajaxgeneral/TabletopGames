@@ -78,7 +78,7 @@
     <string name="gametobeplayed">Game to be Played?</string>
     <string name="day1to10">Day? 1 – 10</string>
     <string name="month1to12">Month? 1 – 12</string>
-    <string name="time1to12AMPM">Time? 10 AM to 9 PM</string>
+    <string name="time1to12AMPM">Time? 10:00 AM to 9:00 PM</string>
     <string name="table1to3">Table? 1 – 3</string>
     <string name="seat1to10">Seat? 1 – 10</string>
     <string name="duration1to4">How long? 1 – 4</string>
@@ -147,4 +147,6 @@
     <string name="title_activity_mtg_entry">MtgEntry</string>
     <string name="mtgentry">Magic the Gathering Entry</string>
     <string name="mtgentrywinnertext"> was the winner of game </string>
+    <string name="day1to31">Day? 1 to 31</string>
+    <string name="startingclass">Starting Class</string>
 </resources>

@@ -90,20 +90,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 )
             }
         )
-        TextField(
-            value = dayMonthYear.value,
-            onValueChange = { dayMonthYear.value = it
-                viewModel.onAdvNameChange(dayMonthYear.value)
-            },
-            label = {
-                Text( text = stringResource(R.string.daymonthyear),
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.colorPrimaryDark),
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        )
+
         TextField(
             value = dmdcinumber.value,
             onValueChange = { dmdcinumber.value = it
@@ -170,21 +157,23 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 )
             }
         )
+        if (viewModel.dndEntryItemIndex!=-1){
+            TextField(
+                value = levelaccepted.value,
+                onValueChange = { levelaccepted.value = it
+                    viewModel.onAdvNameChange(levelaccepted.value)
+                },
+                label = {
+                    Text( text = stringResource(R.string.levelaccepted),
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.colorPrimaryDark),
+                        fontSize = 20.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
+        }
 
-        TextField(
-            value = levelaccepted.value,
-            onValueChange = { levelaccepted.value = it
-                viewModel.onAdvNameChange(levelaccepted.value)
-            },
-            label = {
-                Text( text = stringResource(R.string.levelaccepted),
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.colorPrimaryDark),
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        )
         TextField(
             value = goldplusminus.value,
             onValueChange = { goldplusminus.value = it

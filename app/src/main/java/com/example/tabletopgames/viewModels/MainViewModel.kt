@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.tabletopgames.R
 import com.example.tabletopgames.models.*
-import com.example.tabletopgames.views.LogSheetsList
 import com.example.tabletopgames.views.Router
 import com.example.tabletopgames.views.Screen
 import io.realm.Realm
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 open class MainViewModel() : ViewModel() {
@@ -22,7 +24,7 @@ open class MainViewModel() : ViewModel() {
     }
 
     // helper
-    var itemIndex = -1
+    var reservationsItemIndex = -1
     fun getImg(gameType: String): Int {
         return when (gameType) {
             GameType().DND -> R.drawable.dungeonsndragons
@@ -46,13 +48,22 @@ open class MainViewModel() : ViewModel() {
             "10" -> "October"
             "11" -> "November"
             "12" -> "December"
-            else -> "Error"
+            else -> "January"
         }
         return monthName
     }
     private fun getNewID(): String {return Calendar.getInstance().timeInMillis.toString() +
                 " " + UUID.randomUUID().toString()
     }
+    private var currentDate = LocalDateTime.now()
+    private var formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+    private var today_f = currentDate.format(formatter)
+    private var dayCreated = ""
+    private var monthCreated = ""
+    private var yearCreated = ""
+    private var today = ""
+
+
 
     //generic navigation functions
     fun backButton(){
@@ -78,7 +89,6 @@ open class MainViewModel() : ViewModel() {
     private var p =  Profile("1","Test","Profile",
                 "test@gmail.com","8178675309")
     var myProfile = p
-
 
     private val _firstName = MutableLiveData("")
     val firstName: LiveData<String> = _firstName
@@ -111,9 +121,10 @@ open class MainViewModel() : ViewModel() {
     fun onSubmitProfilePressed(){
         //add new if creating profile
         //update this if editing profile
-        if (email.value.toString() != "")
-        myLogin.email = email.value.toString()
-        myProfile.email = email.value.toString()
+        if (email.value.toString() != ""){
+            myLogin.email = email.value.toString()
+            myProfile.email = email.value.toString()
+        }
         if(password.value.toString() != "")
         myLogin.password = password.value.toString()
         if(firstName.value.toString() != "")
@@ -142,8 +153,9 @@ open class MainViewModel() : ViewModel() {
     val duration: LiveData<String> =_duration
 
 
-    private var newReservation = Reservation("","","",
-                "","","","","")
+    var reservationBlank = Reservation("","","",
+        "","","","","")
+    private var newReservation = reservationBlank
 
     //use RealmResults to build this list
     // where profileID == MyProfile.id
@@ -186,35 +198,32 @@ open class MainViewModel() : ViewModel() {
         return yearV
     }
     fun onSubmitReservationButtonPressed(){
-        val dayV = day.toString()
-        val monthV = month.toString()
+        val dayV = day.value.toString()
+        val monthV = month.value.toString()
         val year = getNewResYear(dayV,monthV)
         val dayMonthYear = dayV + " " + getMonthName(monthV) + " " + year
-        if (itemIndex==-1){
-            newReservation = Reservation(getNewID(),myProfile.id,gametype.value.toString(),
-                dayMonthYear,time.value.toString(),table.value.toString(),seat.value.toString(),
-                duration.value.toString())
-            /*
+        if (reservationsItemIndex==-1){
             newReservation.gameType = gametype.value.toString()
             newReservation.dayMonthYear = dayMonthYear
+            newReservation.time = time.value.toString()
             newReservation.table = table.value.toString()
             newReservation.seat = seat.value.toString()
             newReservation.duration = duration.value.toString()
             newReservation.profileID = myProfile.id
             newReservation.id = getNewID()
-            */
+
             //if no reservation with this date, time, and location exists
             //then add to Reservation Realm and add to reservationsListOf
 
             reservationsListOf.add(newReservation)
         }
         else {
-            reservationsListOf[itemIndex].gameType = gametype.value.toString()
-            reservationsListOf[itemIndex].dayMonthYear = dayMonthYear
-            reservationsListOf[itemIndex].table = table.value.toString()
-            reservationsListOf[itemIndex].seat = seat.value.toString()
-            reservationsListOf[itemIndex].duration = duration.value.toString()
-            reservationsListOf[itemIndex].time = time.value.toString()
+            reservationsListOf[reservationsItemIndex].gameType = gametype.value.toString()
+            reservationsListOf[reservationsItemIndex].dayMonthYear = dayMonthYear
+            reservationsListOf[reservationsItemIndex].table = table.value.toString()
+            reservationsListOf[reservationsItemIndex].seat = seat.value.toString()
+            reservationsListOf[reservationsItemIndex].duration = duration.value.toString()
+            reservationsListOf[reservationsItemIndex].time = time.value.toString()
         }
         Router.navigateTo(Screen.ReservationsScreen)
     }
@@ -222,18 +231,18 @@ open class MainViewModel() : ViewModel() {
         Router.navigateTo(Screen.NewReservationScreen)
     }
     fun onNewReservationButtonPressed(){
-        itemIndex = -1
+        reservationsItemIndex = -1
         Router.navigateTo(Screen.NewReservationScreen)
     }
     fun onDeleteReservationButtonPressed(){
         //delete reservationsListOf[itemIndex]
-        reservationsListOf.removeAt(itemIndex)
+        reservationsListOf.removeAt(reservationsItemIndex)
         //remove It from Realm
 
         Router.navigateTo(Screen.ReservationsScreen)
     }
     fun onReservationListItemClicked(index: Int) {
-        itemIndex = index
+        reservationsItemIndex = index
         Router.navigateTo(Screen.ReservationDetailsScreen)
     }
 
@@ -341,6 +350,11 @@ open class MainViewModel() : ViewModel() {
     fun onCharacterRaceChange(race: String){
         _characterrace.value = race
     }
+    private val _classes = MutableLiveData("")
+    val classes: LiveData<String> = _classes
+    fun onClassChange(classes: String){
+        _classes.value = classes
+    }
     //dndAlLogSheet.classes is calculated from the entries; the default is 'Fighter'
 
     private val _faction = MutableLiveData("")
@@ -349,7 +363,8 @@ open class MainViewModel() : ViewModel() {
         _faction.value = faction
     }
 
-    var logSheetItem = LogSheet("","","","")
+    var logSheetItemBlank = LogSheet("","","","")
+    var logSheetItem = logSheetItemBlank
     var logsheetItemIndex = -1
 
     fun onNewDndLogSheetButtonPressed(){
@@ -412,6 +427,7 @@ open class MainViewModel() : ViewModel() {
         "","","",
         "","","",
         "")
+    var dndLogSheetEntriesEmpty = mutableListOf<DndAlEntry>()
     var dndLogSheetEntry = dndLogSheetEntryBlank
     private val _advname = MutableLiveData("")
     val advname: LiveData<String> = _advname
@@ -517,7 +533,37 @@ open class MainViewModel() : ViewModel() {
         Router.navigateTo(Screen.LogSheetsScreen)
     }
     fun onSubmitDndLogSheetButtonPressed(){
+        var newDndLogSheet = dndLogSheetBlank
+        var newlogsheetitem = logSheetItemBlank
         // build a DndAlLogSheet object and copyToRealm
+        // and add to dndLogSheets
+
+        if (logsheetItemIndex==-1){ //new logsheet add to dndLogSheets and logsheets
+            newDndLogSheet.playerDCInumber = playerdcinumber.value.toString()
+            newDndLogSheet.characterName = charactername.value.toString()
+            newDndLogSheet.characterRace = characterrace.value.toString()
+            newDndLogSheet.classes = classes.value.toString()
+            newDndLogSheet.faction = faction.value.toString()
+            newlogsheetitem.profileID = myProfile.id
+            newlogsheetitem.gameType = GameType().DND
+            newlogsheetitem.dateCreated = today_f
+            newDndLogSheet.id = getNewID()
+            newlogsheetitem.id = newDndLogSheet.id
+            dndLogSheets.add(newDndLogSheet)
+            logSheetList.add(newlogsheetitem)
+        }else{ // old logsheet edit at logsheetItemIndex
+            if (!playerdcinumber.equals("")){
+                dndLogSheets[dndLogSheetIndex].playerDCInumber = playerdcinumber.value.toString() }
+            if (!charactername.equals("")){
+                dndLogSheets[dndLogSheetIndex].characterName = charactername.value.toString() }
+            if (!characterrace.equals("")){
+                dndLogSheets[dndLogSheetIndex].characterRace = characterrace.value.toString() }
+            if (!classes.equals("")){
+                dndLogSheets[dndLogSheetIndex].classes = classes.value.toString() }
+            if (!faction.equals("")){
+                dndLogSheets[dndLogSheetIndex].faction = faction.value.toString() }
+        }
+
 
         Router.navigateTo(Screen.LogSheetsScreen)
     }
@@ -579,12 +625,20 @@ open class MainViewModel() : ViewModel() {
         //get data from viewModel variables
         //change object in list
         //change RealmObject
+        if (dndEntryItemIndex==-1){// make a new entry and add it to the list
 
+        }else{ // edit dndEntries[dndEntryItemIndex]
+
+        }
         Router.navigateTo(Screen.DndLogSheetScreen)
     }
-    // test data for ui
-    private fun getDndEntries(logsheetID: String): MutableList<DndAlEntry> {
+
+
+    fun getDndEntries(logsheetID: String): MutableList<DndAlEntry> {
         val dndEntryList = mutableListOf<DndAlEntry>()
+        // use RealmResults to build dndLogSheetEntries
+
+        // test data for ui
         for (i in 0 until (logsheetID.toInt()+3)){
             dndEntryList.add(DndAlEntry((i+1).toString(),myProfile.id,logsheetID,"DDAL",
                 "Test Adventure "+(i+1).toString(),(i*3+1).toString()+" January 2021","testDM",

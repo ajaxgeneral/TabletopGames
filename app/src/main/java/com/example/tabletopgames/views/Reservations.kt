@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,8 +19,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tabletopgames.R
 import com.example.tabletopgames.models.Reservation
 import com.example.tabletopgames.viewModels.MainViewModel
@@ -55,17 +59,7 @@ fun ReservationsListView(viewModel: MainViewModel) {
 @Composable
 fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
     if(viewModel.reservationsListOf.isEmpty())viewModel.buildReservationList()
-    val reservations = viewModel.reservationsListOf
-    /*
-    LazyColumn{
-        items(reservations) { reservation ->
-            val img = viewModel.getImg(reservation.gameType)
-            ListItem(img,reservation,viewModel)
-            Divider()
-        }
-    }
-
-     */
+    val reservations = remember { viewModel.reservationsListOf }
 
     Column(modifier = Modifier.fillMaxWidth()
             .verticalScroll(scrollState),
@@ -122,12 +116,13 @@ fun ListItem(img: Int, reservation: Reservation, viewModel: MainViewModel,
                 alignment = Alignment.Center
             )
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = reservation.gameType)
+                Text(text = reservation.gameType,
+                    fontSize = 25.sp, fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center, color = colorResource(R.color.comicrose))
                 Divider()
                 Row(){
-                    Text(text = reservation.dayMonthYear)
-
-                    Text(text = " at "+ reservation.time)
+                    Text(text = reservation.dayMonthYear, fontSize = 18.sp,color = Color.Black)
+                    Text(text = " at "+ reservation.time, fontSize = 18.sp,color = Color.Black)
                 }
 
             }
