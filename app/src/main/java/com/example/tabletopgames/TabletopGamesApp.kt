@@ -35,6 +35,13 @@ fun TabletopGamesApp(viewModel: MainViewModel){
 private fun AppContent(viewModel: MainViewModel){
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope: CoroutineScope = rememberCoroutineScope()
+    if (viewModel.reservationsListOf.isEmpty()){ viewModel.buildReservationList() }
+    if (viewModel.logSheetList.isEmpty()){ viewModel.buildLogSheetList() }
+    if (viewModel.dndLogSheets.isEmpty()){ viewModel.buildDndLogSheets() }
+    if (viewModel.dndLogSheetEntries.isEmpty()){ viewModel.buildDndEntries() }
+    if (viewModel.testListOfPlayers.isEmpty()){ viewModel.buildPlayersList() }
+    if (viewModel.mtgLogSheets.isEmpty()){ viewModel.buildMtgLogSheets() }
+    if (viewModel.mtgLogSheetEntries.isEmpty()){ viewModel.buildMtgLogSheetEntries() }
     Crossfade(currentScreen,modifier = Modifier.fillMaxWidth()) {
             screenState: MutableState<Screen> ->
         Scaffold(

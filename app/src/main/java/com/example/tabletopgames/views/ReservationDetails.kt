@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,9 +39,9 @@ class ReservationDetails : ComponentActivity() {
 
 @Composable
 fun ReservationDetails(viewModel: MainViewModel) {
-    val reservation = viewModel.reservationsListOf[viewModel.reservationsItemIndex]
-    val painter = viewModel.getImg(reservation.gameType)
-    val contentDescription = reservation.gameType
+    val reservation = remember { viewModel.reservationsListOf[viewModel.reservationsItemIndex] }
+    val painter = remember { viewModel.getImg(reservation.gameType) }
+    val contentDescription = remember { reservation.gameType }
     Column(verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally){
         Row(

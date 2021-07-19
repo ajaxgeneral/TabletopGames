@@ -44,15 +44,6 @@ class LogSheets : ComponentActivity() {
 @Composable
 fun LogSheetsList(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    if (viewModel.logSheetList.isEmpty()){ viewModel.buildLogSheetList() }
-    if (viewModel.dndLogSheets.isEmpty()){
-        viewModel.buildDndLogSheets()
-        viewModel.buildDndEntries()
-    }
-    if (viewModel.testListOfPlayers.isEmpty()){ viewModel.buildPlayersList() }
-    if (viewModel.mtgLogSheetEntries.isEmpty()){ viewModel.buildMtgLogSheetEntries() }
-    if (viewModel.mtgLogSheets.isEmpty()){ viewModel.buildMtgLogSheets() }
-
     val logsheets = remember { viewModel.logSheetList }
     Column(modifier = Modifier.padding(5.dp).fillMaxWidth()
         .verticalScroll(scrollState)){
@@ -95,21 +86,7 @@ fun LogSheetsList(viewModel: MainViewModel) {
                     color = Color.White
                 )
             }
-            TextButton(onClick = {
-                viewModel.onNewMonopolyLogSheetButtonPressed()
-            },
-                colors = ButtonDefaults.buttonColors(backgroundColor =
-                colorResource(id = R.color.comicred)),
-                border = BorderStroke(
-                    1.dp,color = colorResource(id = R.color.comicrose)
-                ),
-                modifier = Modifier
-            ) {
-                Text(
-                    text = stringResource(id = R.string.monopolybutton),
-                    color = Color.White
-                )
-            }
+            
             TextButton(onClick = {
                 viewModel.onHomeButtonPressed()
             },

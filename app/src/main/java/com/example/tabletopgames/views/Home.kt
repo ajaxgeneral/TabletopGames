@@ -54,7 +54,7 @@ fun HomeView(viewModel: MainViewModel) {
             contentDescription = null,
             contentScale = ContentScale.Fit)
 
-       // Box(modifier = Modifier) {
+
 
 
             Row(modifier = Modifier.fillMaxWidth(),
@@ -103,7 +103,7 @@ fun HomeView(viewModel: MainViewModel) {
                     )
                 }
             }
-        //}
+
     }
     //Text(text = "Hello World! Its Home view.")
     BackHandler() {

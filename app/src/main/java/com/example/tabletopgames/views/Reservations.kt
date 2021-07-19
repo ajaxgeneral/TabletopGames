@@ -58,7 +58,7 @@ fun ReservationsListView(viewModel: MainViewModel) {
 
 @Composable
 fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
-    if(viewModel.reservationsListOf.isEmpty())viewModel.buildReservationList()
+
     val reservations = remember { viewModel.reservationsListOf }
 
     Column(modifier = Modifier.fillMaxWidth()

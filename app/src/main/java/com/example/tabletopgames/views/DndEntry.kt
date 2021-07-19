@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -43,8 +44,10 @@ class DndEntry : ComponentActivity() {
 @Composable
 fun DndEntryScreen(viewModel: MainViewModel){
     val scrollState = rememberScrollState()
-
-    val entry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex]
+    var entry = remember { viewModel.dndLogSheetEntryBlank }
+    if (viewModel.dndEntryItemIndex!=-1){
+        entry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex]
+    }
     Column(modifier = Modifier
         .padding(5.dp)
         .background(color = colorResource(id = R.color.colorAccent))
@@ -56,8 +59,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.adventureName,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.adventureName,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.adventurecode),
                 fontWeight = FontWeight.Bold,
@@ -65,8 +69,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.adventureCode,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.adventureCode,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.daymonthyear),
                 fontWeight = FontWeight.Bold,
@@ -74,8 +79,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.dayMonthYear,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.dayMonthYear,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.dmdcinumber),
                 fontWeight = FontWeight.Bold,
@@ -83,8 +89,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.dmDCInumber,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.dmDCInumber,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.startinglevel),
                 fontWeight = FontWeight.Bold,
@@ -92,8 +99,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.startingLevel,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.startingLevel,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.startinggold),
                 fontWeight = FontWeight.Bold,
@@ -101,8 +109,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.startingGold,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.startingGold,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.startingdowntime),
                 fontWeight = FontWeight.Bold,
@@ -110,8 +119,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.startingDowntime,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.startingDowntime,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.startingmagicitems),
                 fontWeight = FontWeight.Bold,
@@ -119,8 +129,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.startingPermanentMagicItems,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.startingPermanentMagicItems,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.levelaccepted),
                 fontWeight = FontWeight.Bold,
@@ -128,8 +139,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.levelAccepted,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.levelAccepted,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.goldplusminus),
                 fontWeight = FontWeight.Bold,
@@ -137,8 +149,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.goldPlusMinus,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.goldPlusMinus,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.downtimeplusminus),
                 fontWeight = FontWeight.Bold,
@@ -146,8 +159,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.downtimePlusMinus,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.downtimePlusMinus,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.permanentmagicitemsplusminus),
                 fontWeight = FontWeight.Bold,
@@ -155,8 +169,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.permanentMagicItemsPlusMinus,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.permanentMagicItemsPlusMinus,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.newclass),
                 fontWeight = FontWeight.Bold,
@@ -164,8 +179,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.newClassLevel,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.newClassLevel,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.goldtotal),
                 fontWeight = FontWeight.Bold,
@@ -173,19 +189,19 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(viewModel.getTotalGold(entry.startingGold,
-                entry.goldPlusMinus),modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.newGoldTotal,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.downtimetotal),
                 fontWeight = FontWeight.Bold,
                 color = colorResource(R.color.colorPrimaryDark),
                 fontSize = 20.sp,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(viewModel.getTotalDowntime(entry.startingDowntime,
-                entry.downtimePlusMinus),modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.newDowntimeTotal,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row() {
             Text( text = stringResource(R.string.permanentmagicitemstotal),
                 fontWeight = FontWeight.Bold,
@@ -193,9 +209,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(viewModel.getTotalPermanentMagicItems(entry.startingPermanentMagicItems,
-                entry.permanentMagicItemsPlusMinus),modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.newPermanentMagicItemTotal,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row(){
             Text( text = stringResource(R.string.adventurenotes),
                 fontWeight = FontWeight.Bold,
@@ -203,8 +219,9 @@ fun DndEntryScreen(viewModel: MainViewModel){
                 fontSize = 20.sp,
                 modifier = Modifier.fillMaxWidth(.5f)
             )
-            Text(entry.adventureNotes,modifier = Modifier.fillMaxWidth(.5f))
+            Text(entry.adventureNotes,fontSize = 20.sp,modifier = Modifier.fillMaxWidth(.5f))
         }
+        Divider()
         Row(
             modifier = Modifier.fillMaxWidth(1f),
             Arrangement.SpaceEvenly

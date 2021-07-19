@@ -54,6 +54,14 @@ fun AppDrawer(currentScreen: Screen,
             Router.navigateTo(Screen.LogSheetsScreen)
             closeDrawerAction
         }
+        ScreenNavigationButton(
+            icon = Icons.Filled.AccountCircle,
+            label = stringResource(R.string.manage_accounts_button),
+            isSelected = currentScreen == Screen.MyProfileScreen
+        ) {
+            Router.navigateTo(Screen.MyProfileScreen)
+            closeDrawerAction
+        }
     }
 }
 

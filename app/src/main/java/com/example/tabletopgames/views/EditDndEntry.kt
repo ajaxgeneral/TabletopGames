@@ -46,18 +46,17 @@ class NewDNDentry : ComponentActivity() {
 fun EditDNDentryScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var dndentry = remember { viewModel.dndLogSheetEntryBlank }
-    if (viewModel.dndEntryItemIndex!=-1){
+    if (viewModel.dndEntryItemIndex != -1 && !viewModel.newLogsheet ){
         dndentry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex] }
-    val advname = remember { mutableStateOf(dndentry.adventureName) }
-    val advcode = remember { mutableStateOf(dndentry.adventureCode) }
-    val dayMonthYear = remember { mutableStateOf(dndentry.dayMonthYear) }
-    val dmdcinumber = remember { mutableStateOf(dndentry.dmDCInumber) }
-    val goldplusminus = remember { mutableStateOf(dndentry.goldPlusMinus) }
-    val downtimeplusminus = remember { mutableStateOf(dndentry.downtimePlusMinus) }
-    val permanentmagicitemsplusminus = remember { mutableStateOf(dndentry.permanentMagicItemsPlusMinus) }
-    val newclass = remember { mutableStateOf(dndentry.newClassLevel) }
-    val advnotes = remember { mutableStateOf(dndentry.adventureNotes) }
-    val levelaccepted = remember { mutableStateOf(dndentry.levelAccepted) }
+    val advname = remember { mutableStateOf("") }
+    val advcode = remember { mutableStateOf("") }
+    val dmdcinumber = remember { mutableStateOf("") }
+    val goldplusminus = remember { mutableStateOf("") }
+    val downtimeplusminus = remember { mutableStateOf("") }
+    val permanentmagicitemsplusminus = remember { mutableStateOf("") }
+    val newclass = remember { mutableStateOf("") }
+    val advnotes = remember { mutableStateOf("") }
+    val levelaccepted = remember { mutableStateOf("") }
 
     Column(modifier = Modifier
         .padding(5.dp).background(color = colorResource(id = R.color.colorAccent))
@@ -79,7 +78,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
         TextField(
             value = advcode.value,
             onValueChange = { advcode.value = it
-                viewModel.onAdvNameChange(advcode.value)
+                viewModel.onAdvCodeChange(advcode.value)
             },
             label = {
                 Text( text = stringResource(R.string.adventurecode),
@@ -94,7 +93,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
         TextField(
             value = dmdcinumber.value,
             onValueChange = { dmdcinumber.value = it
-                viewModel.onAdvNameChange(dmdcinumber.value)
+                viewModel.onDmDciNumberChange(dmdcinumber.value)
             },
             label = {
                 Text( text = stringResource(R.string.dmdcinumber),
@@ -105,59 +104,59 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 )
             }
         )
-        TextField(
-            value = viewModel.getStartingLevel(dndentry.logsheetID),
-            onValueChange = {
-            },
-            label = {
-                Text( text = stringResource(R.string.startinglevel),
-                fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.colorPrimaryDark),
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        )
-        TextField(
-            value = viewModel.getStartingGold(dndentry.logsheetID),
-            onValueChange = {
-            },
-            label = {
-                Text( text = stringResource(R.string.startinggold),
-                fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.colorPrimaryDark),
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        )
-        TextField(
-            value = viewModel.getStartingDowntime(dndentry.logsheetID),
-            onValueChange = {
-            },
-            label = {
-                Text( text = stringResource(R.string.startingdowntime),
-                fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.colorPrimaryDark),
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        )
-        TextField(
-            value = viewModel.getStartingMagicItems(dndentry.logsheetID),
-            onValueChange = {
-            },
-            label = {
-                Text( text = stringResource(R.string.startingmagicitems),
-                fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.colorPrimaryDark),
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        )
         if (viewModel.dndEntryItemIndex!=-1){
+            TextField(
+                value = dndentry.startingLevel,
+                onValueChange = {
+                },
+                label = {
+                    Text( text = stringResource(R.string.startinglevel),
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.colorPrimaryDark),
+                        fontSize = 20.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
+            TextField(
+                value = dndentry.startingGold,
+                onValueChange = {
+                },
+                label = {
+                    Text( text = stringResource(R.string.startinggold),
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.colorPrimaryDark),
+                        fontSize = 20.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
+            TextField(
+                value = dndentry.startingDowntime,
+                onValueChange = {
+                },
+                label = {
+                    Text( text = stringResource(R.string.startingdowntime),
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.colorPrimaryDark),
+                        fontSize = 20.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
+            TextField(
+                value = dndentry.startingPermanentMagicItems,
+                onValueChange = {
+                },
+                label = {
+                    Text( text = stringResource(R.string.startingmagicitems),
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(R.color.colorPrimaryDark),
+                        fontSize = 20.sp,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
             TextField(
                 value = levelaccepted.value,
                 onValueChange = { levelaccepted.value = it
@@ -173,11 +172,10 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 }
             )
         }
-
         TextField(
             value = goldplusminus.value,
             onValueChange = { goldplusminus.value = it
-                viewModel.onAdvNameChange(goldplusminus.value)
+                viewModel.onGoldPlusMinusChange(goldplusminus.value)
             },
             label = {
                 Text( text = stringResource(R.string.goldplusminus),
@@ -191,7 +189,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
         TextField(
             value = downtimeplusminus.value,
             onValueChange = { downtimeplusminus.value = it
-                viewModel.onAdvNameChange(downtimeplusminus.value)
+                viewModel.onDowntimePlusMinusChange(downtimeplusminus.value)
             },
             label = {
                 Text( text = stringResource(R.string.downtimeplusminus),
@@ -205,7 +203,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
         TextField(
             value = permanentmagicitemsplusminus.value,
             onValueChange = { permanentmagicitemsplusminus.value = it
-                viewModel.onAdvNameChange(permanentmagicitemsplusminus.value)
+                viewModel.onPermanentMagicItemsPlusMinusChange(permanentmagicitemsplusminus.value)
             },
             label = {
                 Text( text = stringResource(R.string.permanentmagicitemsplusminus),
@@ -219,7 +217,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
         TextField(
             value = newclass.value,
             onValueChange = { newclass.value = it
-                viewModel.onAdvNameChange(newclass.value)
+                viewModel.onNewClassChange(newclass.value)
             },
             label = {
                 Text( text = stringResource(R.string.newclass),
@@ -234,7 +232,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
         TextField(
             value = advnotes.value,
             onValueChange = { advnotes.value = it
-                viewModel.onAdvNameChange(advnotes.value)
+                viewModel.onAdvNotesChange(advnotes.value)
             },
             label = {
                 Text( text = stringResource(R.string.adventurenotes),

@@ -42,11 +42,17 @@ class EditProfile : ComponentActivity() {
 
 @Composable
 fun EditProfile(viewModel: MainViewModel) {
-    val firstNameq = remember{ mutableStateOf("") }
-    val lastNameq = remember{ mutableStateOf("") }
-    val emailq = remember{ mutableStateOf("") }
-    val phoneq = remember{ mutableStateOf("") }
-    val passwordq = remember{ mutableStateOf("") }
+    var profile = viewModel.profileBlank
+    var login = viewModel.loginBlank
+    if (viewModel.newProfile!=-1){
+        profile = viewModel.myProfile
+        login = viewModel.myLogin
+    }
+    val firstNameq = remember{ mutableStateOf(profile.firstName) }
+    val lastNameq = remember{ mutableStateOf(profile.lastName) }
+    val emailq = remember{ mutableStateOf(login.email) }
+    val phoneq = remember{ mutableStateOf(profile.phone) }
+    val passwordq = remember{ mutableStateOf(login.password) }
     Column(modifier = Modifier.fillMaxSize(1f)
         .padding(5.dp).background(colorResource(R.color.colorAccent))) {
         Text(

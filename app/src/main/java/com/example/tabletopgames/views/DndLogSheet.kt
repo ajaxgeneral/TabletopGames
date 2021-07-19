@@ -47,9 +47,10 @@ fun DndLogSheetItemView(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet = remember { viewModel.dndLogSheetBlank }
     var entries = remember { viewModel.dndLogSheetEntriesEmpty }
-    if (viewModel.logsheetItemIndex != -1 ){
+    if (!viewModel.newLogsheet && viewModel.logsheetItemIndex != -1 ){
         logsheet = viewModel.dndLogSheets[viewModel.dndLogSheetIndex]
-        entries = viewModel.dndLogSheetEntries
+        entries = viewModel.dndLogSheetEntries //viewModel.getDndEntries(logsheet.id)
+
     }
     Column(modifier = Modifier
         .padding(5.dp)
@@ -92,9 +93,11 @@ fun DndLogSheetItemView(viewModel: MainViewModel) {
                 )
             }
         }
-        entries.forEach { entry ->
-            DndLogSheetEntryItem(viewModel,entry,entries.indexOf(entry))
-            Divider()
+        if (!viewModel.newLogsheet){
+            entries.forEach { entry ->
+                DndLogSheetEntryItem(viewModel,entry,entries.indexOf(entry))
+                Divider()
+            }
         }
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){

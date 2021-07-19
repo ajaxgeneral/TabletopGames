@@ -149,4 +149,5 @@
     <string name="mtgentrywinnertext"> was the winner of game </string>
     <string name="day1to31">Day? 1 to 31</string>
     <string name="startingclass">Starting Class</string>
+    <string name="addplayerbutton">Add Player</string>
 </resources>

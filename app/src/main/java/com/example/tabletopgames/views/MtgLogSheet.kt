@@ -45,7 +45,7 @@ fun MtgLogSheetItemView(viewModel: MainViewModel) {
     }
     val entries = remember { viewModel.mtgLogSheetEntries }
     val playersList = remember { logsheet.players.split(";") }
-    var count = remember {1}
+    var count = remember {0}
 
     Column(modifier = Modifier
         .padding(5.dp)

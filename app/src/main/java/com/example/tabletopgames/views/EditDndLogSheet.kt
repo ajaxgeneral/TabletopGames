@@ -45,7 +45,7 @@ class NewLogSheet : ComponentActivity() {
 fun EditDndLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet  = remember { viewModel.dndLogSheetBlank }
-    if(viewModel.dndLogSheetItemIndex != -1){
+    if(!viewModel.newLogsheet && viewModel.dndLogSheetItemIndex != -1){
         logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex] }
     val playerdcinumber = remember { mutableStateOf(logsheet.playerDCInumber) }
     val charactername = remember { mutableStateOf(logsheet.characterName) }
@@ -85,7 +85,7 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
                 color = colorResource(R.color.colorPrimaryDark),
                 modifier = Modifier.fillMaxWidth()) }
         )
-        if(viewModel.dndLogSheetItemIndex==-1){
+        if(viewModel.newLogsheet){
             TextField(
                 value = classes.value,
                 onValueChange = {
