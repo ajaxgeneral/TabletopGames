@@ -5,6 +5,7 @@ import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,12 +25,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainScope
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class Home : ComponentActivity() {
-    val viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,5 +121,5 @@ fun HomeView(viewModel: MainViewModel) {
 @Preview
 @Composable
 fun HomeViewPreview(){
-    HomeView(viewModel = MainViewModel())
+
 }

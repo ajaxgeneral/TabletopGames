@@ -150,4 +150,17 @@
     <string name="day1to31">Day? 1 to 31</string>
     <string name="startingclass">Starting Class</string>
     <string name="addplayerbutton">Add Player</string>
+    <string name="addnewplayers">Add New Player(s)</string>
+    <string name="invalidlogin">Invalid Email or Password. Please try again.</string>
+    <string name="fail2registeruser">Could not register user. Please try again.</string>
+    <string name="loginsuccess">Successfully registered this user.</string>
+    <string name="invalidsubmission">You have made an invalid submission. Please try again.</string>
+    <string name="warning">Warning!!!</string>
+    <string name="acknowledged">Acknowledged</string>
+    <string name="notconnected">The app is not connected to the server!</string>
+    <string name="realmerror">Error in realm</string>
+    <string name="emailexists">This login profile exists. Please try again.</string>
+    <string name="none">none</string>
+    <string name="emptyfields">Please fill out all fields. Thank you.</string>
+    <string name="noblankfields">The fields cannot be blank. Please fill out all fields.</string>
 </resources>

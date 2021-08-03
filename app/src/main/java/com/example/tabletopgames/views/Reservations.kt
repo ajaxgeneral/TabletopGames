@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,15 +25,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.models.Reservation
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class Reservations : ComponentActivity() {
-
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
-        val viewModel = MainViewModel()
+
         super.onCreate(savedInstanceState)
         setContent {
             TabletopGamesTheme {
@@ -134,5 +139,5 @@ fun ListItem(img: Int, reservation: Reservation, viewModel: MainViewModel,
 @Preview(showBackground = true)
 @Composable
 fun ReservationsScreenPreview() {
-    ReservationsListView(viewModel = MainViewModel())
+
 }

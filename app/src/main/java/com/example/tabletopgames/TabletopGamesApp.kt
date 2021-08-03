@@ -2,6 +2,7 @@ package com.example.tabletopgames
 
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -26,8 +27,6 @@ fun TabletopGamesApp(viewModel: MainViewModel){
     TabletopGamesTheme {
         AppContent(viewModel)
     }
-
-
 }
 
 @ExperimentalComposeUiApi
@@ -35,25 +34,21 @@ fun TabletopGamesApp(viewModel: MainViewModel){
 private fun AppContent(viewModel: MainViewModel){
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope: CoroutineScope = rememberCoroutineScope()
-    if (viewModel.reservationsListOf.isEmpty()){ viewModel.buildReservationList() }
-    if (viewModel.logSheetList.isEmpty()){ viewModel.buildLogSheetList() }
-    if (viewModel.dndLogSheets.isEmpty()){ viewModel.buildDndLogSheets() }
-    if (viewModel.dndLogSheetEntries.isEmpty()){ viewModel.buildDndEntries() }
-    if (viewModel.testListOfPlayers.isEmpty()){ viewModel.buildPlayersList() }
-    if (viewModel.mtgLogSheets.isEmpty()){ viewModel.buildMtgLogSheets() }
-    if (viewModel.mtgLogSheetEntries.isEmpty()){ viewModel.buildMtgLogSheetEntries() }
+
     Crossfade(currentScreen,modifier = Modifier.fillMaxWidth()) {
             screenState: MutableState<Screen> ->
         Scaffold(
             topBar = getTopBar(screenState.value,scaffoldState,scope),
             drawerContent = {
                 AppDrawer(
+                    viewModel,
                     currentScreen = Screen.HomeScreen,
                     closeDrawerAction = {
                         scope.launch{
                             scaffoldState.drawerState.close()
                         }
-                    }
+                    },
+
                 )
             },
             scaffoldState = scaffoldState,
@@ -64,7 +59,7 @@ private fun AppContent(viewModel: MainViewModel){
                 MainScreenContainer(
                     modifier = Modifier.padding(bottom = 56.dp),
                     screenState = screenState,
-                    viewModel = viewModel
+                    viewModel = viewModel,
                 )
                       },
             contentColor = colorResource(id = R.color.colorPrimary),
@@ -140,6 +135,8 @@ fun TopAppBar(scaffoldState: ScaffoldState,scope: CoroutineScope){
         backgroundColor = colors.surface,
     )
 }
+
+
 
 @ExperimentalComposeUiApi
 @Composable

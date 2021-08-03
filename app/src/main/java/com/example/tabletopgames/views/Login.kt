@@ -4,24 +4,34 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 
 class Login : ComponentActivity() {
-    val viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,14 +39,17 @@ class Login : ComponentActivity() {
             LoginView(viewModel)
         }
     }
-
-
 }
 
 @ExperimentalComposeUiApi
 @Composable
 fun LoginView(viewModel: MainViewModel) {
-    Column(modifier = Modifier.padding(16.dp)) {
+
+    Column(modifier = Modifier
+        .background(colorResource(R.color.colorAccent))
+        .fillMaxSize(1f).fillMaxWidth(1f),
+            horizontalAlignment = Alignment.CenterHorizontally ){
+
         Text(text = stringResource(id = R.string.email),
             modifier = Modifier.fillMaxWidth())
         MyEmailTextField(viewModel)
@@ -44,6 +57,10 @@ fun LoginView(viewModel: MainViewModel) {
             modifier = Modifier.fillMaxWidth())
         MyPasswordTextField(viewModel)
         MyButtonRow(viewModel)
+        Text("")
+        Text("")
+        Text("")
+        Text("")
         MyLogo(viewModel)
     }
     BackHandler() {
@@ -53,7 +70,10 @@ fun LoginView(viewModel: MainViewModel) {
 
 @Composable
 fun MyLogo(viewModel: MainViewModel) {
-
+    Image(painter = painterResource(R.drawable.multiversemainimage),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize())
 }
 
 
@@ -63,7 +83,9 @@ fun MyButtonRow(viewModel: MainViewModel) {
     Row(modifier = Modifier.fillMaxWidth(),
         Arrangement.SpaceEvenly) {
         TextButton(onClick = {
-            viewModel.onLoginPressed()
+            if(viewModel.isValidLogin(viewModel.email.value.toString(),viewModel.password.value.toString())){
+                viewModel.onLoginPressed()
+            }
         },
             colors = ButtonDefaults.buttonColors(backgroundColor =
             colorResource(id = R.color.comicred)),
@@ -133,11 +155,6 @@ fun MyEmailTextField(viewModel: MainViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun LoginPreview(){
-    LoginView(viewModel = MainViewModel())
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview7() {
 
 }
+

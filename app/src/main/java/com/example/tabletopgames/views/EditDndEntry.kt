@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,12 +24,16 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class NewDNDentry : ComponentActivity() {
-    val viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -287,6 +292,6 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
 @Composable
 fun EditDNDentryScreenPreview() {
     TabletopGamesTheme {
-        EditDNDentryScreen(viewModel = MainViewModel())
+
     }
 }

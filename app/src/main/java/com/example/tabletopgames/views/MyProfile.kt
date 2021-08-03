@@ -5,6 +5,7 @@ import android.text.Layout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,11 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 
 class MyProfileView: ComponentActivity() {
-    var viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -92,5 +97,5 @@ fun MyProfileView(viewModel: MainViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun MyProfileViewPreview() {
-    MyProfileView(viewModel = MainViewModel())
+
 }

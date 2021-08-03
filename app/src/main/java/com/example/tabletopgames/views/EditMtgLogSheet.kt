@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,13 +21,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class EditMtgLogSheet : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
-        val viewModel = MainViewModel()
+
         super.onCreate(savedInstanceState)
         setContent {
             TabletopGamesTheme {
@@ -44,13 +50,13 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet = remember { viewModel.mtgLogSheetBlank }
     var playersList = remember { viewModel.playersListEmpty }
-    if(viewModel.mtgLogSheetIndex != -1){
+    if(!viewModel.newLogsheet){
         logsheet = viewModel.mtgLogSheets[viewModel.mtgLogSheetIndex]
         playersList = viewModel.testListOfPlayers
     }
     var count = remember {0}
     val date_created = remember { mutableStateOf(logsheet.dayMonthYear) }
-    val newPlayer = remember { mutableStateOf("") }
+    val newPlayers = remember { mutableStateOf("") }
     var newplayerslist = remember { viewModel.newPlayersList }
 
     Column(modifier = Modifier
@@ -82,16 +88,19 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
         }
         Divider()
         TextField(
-            value = newPlayer.value,
+            value = newPlayers.value,
             onValueChange = {
-                newPlayer.value = it
-                viewModel.onPlayerChange(newPlayer.value)}
+                newPlayers.value = it
+                viewModel.onPlayerChange(newPlayers.value)
+            },
+            label = { Text(stringResource(R.string.addnewplayers)) },
+            maxLines = 10,
         )
         Divider()
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){
             TextButton(
-                onClick = { viewModel.onAddPlayerButtonPressed(newPlayer.value) },
+                onClick = { viewModel.onAddPlayerButtonPressed(newPlayers.value) },
                 colors = ButtonDefaults.buttonColors(backgroundColor =
                 colorResource(id = R.color.comicred)
                 ),
@@ -150,6 +159,6 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
 @Composable
 fun DefaultPreview3() {
     TabletopGamesTheme {
-        EditMtgLogSheetScreen(viewModel = MainViewModel())
+
     }
 }

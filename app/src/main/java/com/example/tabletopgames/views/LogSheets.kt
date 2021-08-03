@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -21,13 +22,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.models.*
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class LogSheets : ComponentActivity() {
-    val viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -125,5 +130,5 @@ fun LogSheetItem(img: Int, logsheet: LogSheet, viewModel: MainViewModel, index: 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    LogSheetsList(viewModel = MainViewModel())
+
 }

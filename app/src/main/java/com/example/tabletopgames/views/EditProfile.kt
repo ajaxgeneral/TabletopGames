@@ -1,9 +1,11 @@
 package com.example.tabletopgames.views
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,7 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -21,12 +23,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
 import com.example.tabletopgames.viewModels.MainViewModel
+import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class EditProfile : ComponentActivity() {
-    val viewModel = MainViewModel()
+    private val viewModel: MainViewModel by viewModels {
+        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -37,22 +48,21 @@ class EditProfile : ComponentActivity() {
                 }
             }
         }
+
     }
 }
 
 @Composable
 fun EditProfile(viewModel: MainViewModel) {
-    var profile = viewModel.profileBlank
-    var login = viewModel.loginBlank
-    if (viewModel.newProfile!=-1){
-        profile = viewModel.myProfile
-        login = viewModel.myLogin
-    }
-    val firstNameq = remember{ mutableStateOf(profile.firstName) }
-    val lastNameq = remember{ mutableStateOf(profile.lastName) }
-    val emailq = remember{ mutableStateOf(login.email) }
-    val phoneq = remember{ mutableStateOf(profile.phone) }
-    val passwordq = remember{ mutableStateOf(login.password) }
+    var scope = rememberCoroutineScope()
+    var profile = viewModel.myProfile
+    var login = viewModel.myLogin
+    val firstNameq = remember{ mutableStateOf("") }
+    val lastNameq = remember{ mutableStateOf("") }
+    val emailq = remember{ mutableStateOf("") }
+    val phoneq = remember{ mutableStateOf("") }
+    val passwordq = remember{ mutableStateOf("") }
+
     Column(modifier = Modifier.fillMaxSize(1f)
         .padding(5.dp).background(colorResource(R.color.colorAccent))) {
         Text(
@@ -109,7 +119,7 @@ fun EditProfile(viewModel: MainViewModel) {
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){
             TextButton(onClick = {
-                viewModel.onSubmitProfilePressed()
+                scope.launch { viewModel.onSubmitProfilePressed() }
             },
                 colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.comicred)),
                 border = BorderStroke(
@@ -148,6 +158,6 @@ fun EditProfile(viewModel: MainViewModel) {
 @Composable
 fun EditProfilePreview() {
     TabletopGamesTheme {
-        EditProfile(viewModel = MainViewModel())
+
     }
 }

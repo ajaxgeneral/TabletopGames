@@ -16,11 +16,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tabletopgames.R
+import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 @Composable
-fun AppDrawer(currentScreen: Screen,
+fun AppDrawer(viewModel: MainViewModel,currentScreen: Screen,
               closeDrawerAction: () -> Unit,
               modifier: Modifier = Modifier) {
     Column(
@@ -35,7 +37,9 @@ fun AppDrawer(currentScreen: Screen,
             label = stringResource(R.string.home),
             isSelected = currentScreen == Screen.HomeScreen
         ) {
-            Router.navigateTo(Screen.HomeScreen)
+            if (viewModel.loggedIn){
+                Router.navigateTo(Screen.HomeScreen)
+            }
             closeDrawerAction
         }
         ScreenNavigationButton(
@@ -43,7 +47,9 @@ fun AppDrawer(currentScreen: Screen,
             label = stringResource(R.string.reservations),
             isSelected = currentScreen == Screen.ReservationsScreen
         ) {
-            Router.navigateTo(Screen.ReservationsScreen)
+            if (viewModel.loggedIn){
+                Router.navigateTo(Screen.ReservationsScreen)
+            }
             closeDrawerAction
         }
         ScreenNavigationButton(
@@ -51,7 +57,9 @@ fun AppDrawer(currentScreen: Screen,
             label = stringResource(R.string.logsheets),
             isSelected = currentScreen == Screen.LogSheetsScreen
         ) {
-            Router.navigateTo(Screen.LogSheetsScreen)
+            if (viewModel.loggedIn){
+                Router.navigateTo(Screen.LogSheetsScreen)
+            }
             closeDrawerAction
         }
         ScreenNavigationButton(
@@ -59,7 +67,9 @@ fun AppDrawer(currentScreen: Screen,
             label = stringResource(R.string.manage_accounts_button),
             isSelected = currentScreen == Screen.MyProfileScreen
         ) {
-            Router.navigateTo(Screen.MyProfileScreen)
+            if (viewModel.loggedIn){
+                Router.navigateTo(Screen.MyProfileScreen)
+            }
             closeDrawerAction
         }
     }
