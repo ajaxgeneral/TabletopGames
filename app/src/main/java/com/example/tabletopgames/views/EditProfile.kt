@@ -118,9 +118,7 @@ fun EditProfile(viewModel: MainViewModel) {
     )
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){
-            TextButton(onClick = {
-                scope.launch { viewModel.onSubmitProfilePressed() }
-            },
+            TextButton(onClick = { viewModel.onSubmitProfilePressed() },
                 colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.comicred)),
                 border = BorderStroke(
                     1.dp,color = colorResource(id = R.color.comicrose)

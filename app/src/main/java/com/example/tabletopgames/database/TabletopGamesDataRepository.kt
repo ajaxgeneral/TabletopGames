@@ -21,10 +21,13 @@ class TabletopGamesDataRepository(
 ) {
 
     //  login functions
+
     fun emailExists(email:String): Boolean{
         var doesExist = false
-        val result = myLoginDao.emailExists(email)
-        if (result!=null){ doesExist = true }
+        val result: List<MyLogin>? = myLoginDao.emailExists(email)
+        if (result != null) {
+            if (result.isNotEmpty()){ doesExist = true }
+        }
         return doesExist
     }
 
@@ -123,7 +126,7 @@ class TabletopGamesDataRepository(
     suspend fun getAllMtgEntriesFor(profileID: Int,logsheetID: Int): List<MtgEntry>? {
         return mtgEntryDao.getAllMtgEntriesFor(profileID,logsheetID)
     }
-    suspend fun getLastMtgEntryFor(profileID: Int,logsheetID: Int): MtgEntry? {
+    suspend fun getLastMtgEntryFor(profileID: Int,logsheetID: Int): MtgEntry {
         val mtgEntries = mtgEntryDao.getAllMtgEntriesFor(profileID,logsheetID)
         var lastEntry = mtgEntries[0]
         var thisEntry = mtgEntries[0]

@@ -8,7 +8,7 @@ interface MyLoginDao {
     @Query("select * from MyLogin where email = :email and password = :password")
     fun findMyLogin(email: String,password: String) : MyLogin?
     @Query("select * from MyLogin where email = :email")
-    fun emailExists(email: String) : MyLogin?
+    fun emailExists(email: String) : List<MyLogin>?
     @Insert
     suspend fun insert(myLogin: MyLogin)
     @Update

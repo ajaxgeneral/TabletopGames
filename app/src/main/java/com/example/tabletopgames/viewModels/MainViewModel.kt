@@ -2,15 +2,13 @@ package com.example.tabletopgames.viewModels
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.tabletopgames.R
 import com.example.tabletopgames.database.TabletopGamesDataRepository
 import com.example.tabletopgames.models.*
 import com.example.tabletopgames.views.Router
 import com.example.tabletopgames.views.Screen
+import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -62,7 +60,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
     var errorMessage = R.string.none.toString()
 
-    suspend fun getUserData() {
+    fun getUserData() = viewModelScope.launch {
         if (loggedIn){
             // make calls to get this users records from the ROOM.
             buildReservationList()
@@ -127,7 +125,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     private val invalidEmailPassword = "Invalid email or password."
     var newLogin = loginBlank
 
-    suspend fun emailExists(): Boolean {
+    private fun emailExists(): Boolean {
         // look for email.value in MyLogin ROOM
         // foundEmail = ROOM.MyLogin where email == email.value
         return repo.emailExists(email.value.toString())
@@ -141,7 +139,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         _password.value = newPassword
     }
 
-    fun onLoginPressed() {
+    fun onLoginPressed() = viewModelScope.launch {
         val isValid = isValidLogin(email.value.toString(),password.value.toString())
         var found = false
         if (isValid) {
@@ -170,7 +168,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         onCreateProfilePressed()
     }
 
-    suspend fun addNewLogin(login: MyLogin) {
+    private suspend fun addNewLogin(login: MyLogin) {
         // add this object to the Room
         repo.addNewLogin(login)
     }
@@ -237,7 +235,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         Router.navigateTo(Screen.EditProfileScreen)
     }
 
-    suspend fun onSubmitProfilePressed() {
+    fun onSubmitProfilePressed() = viewModelScope.launch {
         if (!profileIsEmpty()){
             // create myProfile object and myLogin object
             if(emailExists()){
@@ -257,13 +255,14 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
 
 
 
-    suspend fun createProfileLoginObjects() {
+    suspend fun createProfileLoginObjects() = viewModelScope.launch{
         myLogin.email = email.value.toString()
         myProfile.email = email.value.toString()
         myLogin.password = password.value.toString()
         myProfile.firstName = firstName.value.toString()
         myProfile.lastName = lastName.value.toString()
         myProfile.phone = phone.value.toString()
+        myProfile.userType = User.PUBLIC
         // add the new login and profile objects to the ROOM
         addNewLogin(myLogin)
         addNewProfile(myProfile)
@@ -284,7 +283,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         repo.updateThisProfile(profile)
     }
 
-    suspend fun addNewProfile(profile: MyProfile) {
+    private suspend fun addNewProfile(profile: MyProfile) {
         // add myProfile to the ROOM
         repo.addNewProfile(profile)
     }
