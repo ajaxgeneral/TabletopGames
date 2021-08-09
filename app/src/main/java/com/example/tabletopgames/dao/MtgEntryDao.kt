@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MtgEntryDao {
     @Query("select * from MtgEntry where profileID = :profileID and logsheetID = :logsheetID")
-    fun getAllMtgEntriesFor(profileID:Int,logsheetID:Int) : List<MtgEntry>
+    fun getAllMtgEntriesFor(profileID:Int,logsheetID:Int) : List<MtgEntry>?
 
     @Insert
-    suspend fun insert(mtgEntry: MtgEntry)
+    suspend fun insert(mtgEntry: MtgEntry): Long
     @Update
     suspend fun update(mtgEntry: MtgEntry)
     @Delete

@@ -1,6 +1,5 @@
 package com.example.tabletopgames.views
 
-import android.graphics.fonts.FontStyle
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -52,9 +51,9 @@ fun DndLogSheetItemView(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet = remember { viewModel.dndLogSheetBlank }
     var entries = remember { viewModel.dndLogSheetEntriesEmpty }
-    if (!viewModel.newLogsheet && viewModel.logsheetItemIndex != -1 ){
+    if (!viewModel.isNewDndLogSheet){
         logsheet = viewModel.dndLogSheets[viewModel.dndLogSheetIndex]
-        entries = viewModel.dndLogSheetEntries //viewModel.getDndEntries(logsheet.id)
+        entries = viewModel.dndLogSheetEntries
 
     }
     Column(modifier = Modifier
@@ -98,7 +97,7 @@ fun DndLogSheetItemView(viewModel: MainViewModel) {
                 )
             }
         }
-        if (!viewModel.newLogsheet){
+        if (!viewModel.isNewDndLogSheet){
             entries.forEach { entry ->
                 DndLogSheetEntryItem(viewModel,entry,entries.indexOf(entry))
                 Divider()

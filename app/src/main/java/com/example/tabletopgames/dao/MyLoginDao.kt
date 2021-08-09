@@ -6,9 +6,9 @@ import com.example.tabletopgames.models.MyLogin
 @Dao
 interface MyLoginDao {
     @Query("select * from MyLogin where email = :email and password = :password")
-    fun findMyLogin(email: String,password: String) : MyLogin?
+    suspend fun findMyLogin(email: String,password: String) : MyLogin?
     @Query("select * from MyLogin where email = :email")
-    fun emailExists(email: String) : List<MyLogin>?
+    suspend fun emailExists(email: String) : List<MyLogin>?
     @Insert
     suspend fun insert(myLogin: MyLogin)
     @Update

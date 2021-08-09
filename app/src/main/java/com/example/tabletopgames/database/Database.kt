@@ -46,6 +46,9 @@ abstract class TabletopGamesDatabase : RoomDatabase() {
                 return instance
             }
         }
+        fun destroyInstance(){
+            INSTANCE = null
+        }
     }
 
 }

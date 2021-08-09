@@ -6,12 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "DndAlLogSheet")
 data class DndAlLogSheet(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var id: Int,
     @ColumnInfo(name = "profileID")
     var profileID: Int,
-    @ColumnInfo(name = "logsheetID")
-    var logsheetID: Int,
     @ColumnInfo(name = "gameType")
     var gameType: String,
     @ColumnInfo(name = "playerDCInumber")
@@ -23,7 +21,5 @@ data class DndAlLogSheet(
     @ColumnInfo(name = "classes")
     var classes: String,
     @ColumnInfo(name = "faction")
-    var faction: String,
-    @ColumnInfo(name = "logEntries")
-    var logEntries: String
+    var faction: String
 )

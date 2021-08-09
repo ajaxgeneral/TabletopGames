@@ -27,7 +27,7 @@ import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class ReservationDetails : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
-        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+        ViewModelFactory((application as MyApplication).repository)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -66,7 +66,7 @@ fun ReservationDetails(viewModel: MainViewModel) {
                             Text(text = " "+reservation.time)
                         }
                         Row(modifier = Modifier.fillMaxWidth()){
-                            Text(text = "Table: "+reservation.table)
+                            Text(text = "Table: "+reservation.gameTable)
                             Text(text = " Seat: "+reservation.seat)
                         }
                         Row(modifier = Modifier.fillMaxWidth()){

@@ -18,9 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +49,7 @@ class NewDNDentry : ComponentActivity() {
 fun EditDNDentryScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var dndentry = remember { viewModel.dndLogSheetEntryBlank }
-    if (viewModel.dndEntryItemIndex != -1 && !viewModel.newLogsheet ){
+    if (viewModel.dndEntryItemIndex != -1 && !viewModel.isNewDndLogSheet ){
         dndentry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex] }
     val advname = remember { mutableStateOf("") }
     val advcode = remember { mutableStateOf("") }

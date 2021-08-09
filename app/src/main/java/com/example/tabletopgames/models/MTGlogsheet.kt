@@ -6,18 +6,14 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "MTGlogsheet")
 data class MTGlogsheet(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var id: Int,
-    @ColumnInfo(name = "logsheetID")
-    var logsheetID: Int,
     @ColumnInfo(name = "profileID")
     var profileID: Int,
     @ColumnInfo(name = "gameType")
     var gameType: String,
     @ColumnInfo(name = "players")
-    var players: String,
+    var playersID: Int,
     @ColumnInfo(name = "dayMonthYear")
-    var dayMonthYear: String,
-    @ColumnInfo(name = "logEntries")
-    var logEntries: String
+    var dayMonthYear: String
 )

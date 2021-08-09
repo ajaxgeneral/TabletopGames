@@ -24,7 +24,7 @@ import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class MtgEntry : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
-        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+        ViewModelFactory((application as MyApplication).repository)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +46,16 @@ fun MtgEntryScreen(viewModel: MainViewModel) {
             modifier = Modifier.fillMaxWidth(),
             content = {
                 Text(
-                    viewModel.mtgLogSheetEntry.winner + " ",
+                    viewModel.mtgLogSheetEntry.winner.replace(";","\r"),
                     fontSize = 20.sp, color = colorResource(R.color.colorPrimaryDark),
+                    maxLines = 10
                 )
                 Text(
                     stringResource(R.string.mtgentrywinnertext),
                     fontSize = 20.sp, color = colorResource(R.color.colorPrimaryDark),
                 )
                 Text(
-                    " " + viewModel.magicGameNumber.toString() + ".",
+                    viewModel.magicGameNumber.toString() + ".",
                     fontSize = 20.sp, color = colorResource(R.color.colorPrimaryDark),
                 )
             },

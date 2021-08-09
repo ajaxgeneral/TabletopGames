@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "LogSheet")
 data class LogSheet(
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     var id: Int,
     @ColumnInfo(name = "profileID")
     var profileID: Int,

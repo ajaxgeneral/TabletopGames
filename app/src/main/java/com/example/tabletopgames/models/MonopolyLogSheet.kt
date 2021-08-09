@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "MonopolyLogSheet")
 data class MonopolyLogSheet(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var id: Int,
     @ColumnInfo(name = "profileID")
     var profileID: Int,

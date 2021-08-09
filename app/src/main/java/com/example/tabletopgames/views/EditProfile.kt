@@ -146,6 +146,22 @@ fun EditProfile(viewModel: MainViewModel) {
                     color = Color.White
                 )
             }
+            TextButton(onClick = {
+                viewModel.onDeleteProfilePressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    color = Color.White
+                )
+            }
         }
     }
     //Text(text = "Hello World! This is Edit Profile.")

@@ -17,7 +17,7 @@ data class Reservation(
     @ColumnInfo(name = "time")
     var time: String,
     @ColumnInfo(name = "table")
-    var table: String,
+    var gameTable: String,
     @ColumnInfo(name = "seat")
     var seat: String,
     @ColumnInfo(name = "duration")

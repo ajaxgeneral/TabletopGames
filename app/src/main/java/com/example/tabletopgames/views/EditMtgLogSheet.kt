@@ -50,14 +50,13 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet = remember { viewModel.mtgLogSheetBlank }
     var playersList = remember { viewModel.playersListEmpty }
-    if(!viewModel.newLogsheet){
-        logsheet = viewModel.mtgLogSheets[viewModel.mtgLogSheetIndex]
-        playersList = viewModel.testListOfPlayers
+    if(!viewModel.isNewMtgLogSheet){
+        logsheet = viewModel.mtgLogSheet
     }
-    var count = remember {0}
-    val date_created = remember { mutableStateOf(logsheet.dayMonthYear) }
+    if(viewModel.isAddingNewPlayers){
+        playersList = viewModel.newPlayersList
+    }
     val newPlayers = remember { mutableStateOf("") }
-    var newplayerslist = remember { viewModel.newPlayersList }
 
     Column(modifier = Modifier
         .padding(5.dp)
@@ -68,22 +67,11 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
             color = colorResource(R.color.colorPrimaryDark)
         )
         Text(text = logsheet.gameType)
-        if(viewModel.mtgLogSheetIndex != -1){
-            Text(text = stringResource(R.string.datecreated),fontSize = 25.sp,
-                color = colorResource(R.color.colorPrimaryDark)
-            )
-            TextField(
-                value = date_created.value,
-                onValueChange = {
-                    date_created.value  = it
-                    viewModel.onDateCreatedChange(date_created.value)
-                }
-            )
-        }
+
         Text(text = stringResource(R.string.players),fontSize = 25.sp,
             color = colorResource(R.color.colorPrimaryDark)
         )
-        newplayerslist.forEach { newplayer ->
+        playersList.forEach { newplayer ->
             Text(newplayer)
         }
         Divider()
@@ -91,7 +79,7 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
             value = newPlayers.value,
             onValueChange = {
                 newPlayers.value = it
-                viewModel.onPlayerChange(newPlayers.value)
+                viewModel.onPlayersChange(newPlayers.value)
             },
             label = { Text(stringResource(R.string.addnewplayers)) },
             maxLines = 10,

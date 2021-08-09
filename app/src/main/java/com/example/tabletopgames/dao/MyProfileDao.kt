@@ -6,9 +6,9 @@ import com.example.tabletopgames.models.MyProfile
 @Dao
 interface MyProfileDao {
     @Query("select * from MyProfile where email = :email")
-    fun getMyProfile(email:String) : MyProfile?
+    suspend fun getMyProfile(email:String) : MyProfile?
     @Query("select * from MyProfile where id = :id")
-    fun getMyProfileByID(id: Int) : MyProfile?
+    suspend fun getMyProfileByID(id: Int) : MyProfile?
     @Insert
     suspend fun insert(myProfile: MyProfile)
     @Update

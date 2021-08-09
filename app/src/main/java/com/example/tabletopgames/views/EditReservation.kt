@@ -6,15 +6,17 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -23,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
-import com.example.tabletopgames.models.Reservation
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
@@ -47,9 +48,10 @@ class NewReservation : ComponentActivity() {
 
 @Composable
 fun NewReservation(viewModel: MainViewModel){
+    val scrollState: ScrollState = rememberScrollState()
     var reservation = viewModel.reservationBlank
-    if (viewModel.reservationsItemIndex!=-1) {
-       // reservation = viewModel.reservationsListOf[viewModel.reservationsItemIndex]
+    if (!viewModel.isNewReservation) {
+        reservation = viewModel.reservationsListOf[viewModel.reservationsItemIndex]
     }
     val gametypeq = remember { mutableStateOf(reservation.gameType) }
     val dayq = remember {
@@ -61,12 +63,13 @@ fun NewReservation(viewModel: MainViewModel){
             .substringAfter(" ").substringBefore(" "))
     }
     val timeq = remember { mutableStateOf(reservation.time) }
-    val tableq = remember { mutableStateOf(reservation.table) }
+    val tableq = remember { mutableStateOf(reservation.gameTable) }
     val seatq = remember { mutableStateOf(reservation.seat) }
     val durationq = remember { mutableStateOf(reservation.duration) }
 
 
-    Column(){
+    Column(modifier = Modifier.fillMaxWidth(1f).fillMaxSize(1f)
+        .verticalScroll(scrollState)){
         Text(stringResource(R.string.gametobeplayed))
        TextField(
            value = gametypeq.value,

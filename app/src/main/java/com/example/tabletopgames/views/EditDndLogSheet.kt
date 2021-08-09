@@ -22,12 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
-import com.example.tabletopgames.models.DndAlLogSheet
-import com.example.tabletopgames.models.GameType
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
-import kotlin.math.log
 
 class NewLogSheet : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
@@ -50,7 +47,7 @@ class NewLogSheet : ComponentActivity() {
 fun EditDndLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet  = remember { viewModel.dndLogSheetBlank }
-    if(!viewModel.newLogsheet && viewModel.dndLogSheetItemIndex != -1){
+    if(!viewModel.isNewDndLogSheet && viewModel.dndLogSheetItemIndex != -1){
         logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex] }
     val playerdcinumber = remember { mutableStateOf("") }
     val charactername = remember { mutableStateOf("") }
@@ -90,7 +87,7 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
                 color = colorResource(R.color.colorPrimaryDark),
                 modifier = Modifier.fillMaxWidth()) }
         )
-        if(viewModel.newLogsheet){
+        if(viewModel.isNewDndLogSheet){
             TextField(
                 value = classes.value,
                 onValueChange = {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,7 +65,7 @@ fun ReservationsListView(viewModel: MainViewModel) {
 @Composable
 fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
 
-    val reservations = remember { viewModel.reservationsListOf }
+    val reservations = rememberSaveable() { viewModel.reservationsListOf }
 
     Column(modifier = Modifier.fillMaxWidth()
             .verticalScroll(scrollState),

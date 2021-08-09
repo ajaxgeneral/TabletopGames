@@ -1,4 +1,4 @@
-package com.example.tabletopgames.database
+package com.example.tabletopgames.repository
 
 
 import com.example.tabletopgames.dao.*
@@ -21,21 +21,12 @@ class TabletopGamesDataRepository(
 ) {
 
     //  login functions
-
-    fun emailExists(email:String): Boolean{
-        var doesExist = false
-        val result: List<MyLogin>? = myLoginDao.emailExists(email)
-        if (result != null) {
-            if (result.isNotEmpty()){ doesExist = true }
-        }
-        return doesExist
+    suspend fun emailExists(email:String): List<MyLogin>? {
+        return myLoginDao.emailExists(email)
     }
 
-    fun findMyLogin(myLogin: MyLogin): Boolean {
-       var foundLogin = myLoginDao.findMyLogin(myLogin.email,myLogin.password)
-        var found = false
-        if (foundLogin!=null){ found = true }
-        return found
+    suspend fun findMyLogin(myLogin: MyLogin): MyLogin? {
+        return myLoginDao.findMyLogin(myLogin.email,myLogin.password)
     }
     suspend fun addNewLogin(myLogin: MyLogin){
         myLoginDao.insert(myLogin)
@@ -47,10 +38,10 @@ class TabletopGamesDataRepository(
         myLoginDao.delete(myLogin)
     }
     // profile functions
-    fun getMyProfileByID(id: Int): MyProfile? {
+    suspend fun getMyProfileByID(id: Int): MyProfile? {
         return myProfileDao.getMyProfileByID(id)
     }
-    fun getMyProfile(email: String): MyProfile? {
+    suspend fun getMyProfile(email: String): MyProfile? {
         return myProfileDao.getMyProfile(email)
     }
     suspend fun addNewProfile(myProfile: MyProfile){
@@ -63,11 +54,11 @@ class TabletopGamesDataRepository(
         myProfileDao.delete(myProfile)
     }
     // logsheet functions
-    fun getLogSheetsFor(profileID: Int): List<LogSheet>? {
+    suspend fun getLogSheetsFor(profileID: Int): List<LogSheet>? {
         return logSheetDao.getAllLogSheetsFor(profileID)
     }
-    suspend fun addNewLogSheet(logsheet:LogSheet){
-        logSheetDao.insert(logsheet)
+    suspend fun addNewLogSheet(logsheet:LogSheet): Long {
+        return logSheetDao.insert(logsheet)
     }
     suspend fun updateThisLogSheet(logsheet: LogSheet){
         logSheetDao.update(logsheet)
@@ -75,11 +66,14 @@ class TabletopGamesDataRepository(
     suspend fun deleteThisLogSheet(logsheet: LogSheet){
         logSheetDao.delete(logsheet)
     }
+    suspend fun deleteAllLogSheetsFor(profileID: Int){
+        logSheetDao.deleteAllLogSheetsFor(profileID)
+    }
     // dnd logsheet functions
-    fun getThisDndLogSheet(profileID: Int,logsheetID: Int): DndAlLogSheet? {
+    suspend fun getThisDndLogSheet(profileID: Int,logsheetID: Int): DndAlLogSheet? {
         return dndAlLogSheetDao.getThisDndLogSheet(profileID,logsheetID)
     }
-    fun getAllDndLogSheetsFor(profileID: Int): List<DndAlLogSheet>? {
+    suspend fun getAllDndLogSheetsFor(profileID: Int): List<DndAlLogSheet>? {
         return dndAlLogSheetDao.getAllDndLogSheetsFor(profileID)
     }
     suspend fun addNewDndLogSheet(dndAlLogSheet: DndAlLogSheet){
@@ -92,8 +86,12 @@ class TabletopGamesDataRepository(
         dndAlLogSheetDao.delete(dndAlLogSheet)
     }
     // dnd logsheet entry functions
-    fun getAllDndEntriesFor(profileID: Int,logsheetID: Int): List<DndAlEntry>? {
-        return dndAlEntryDao.getAllDndEntriesFor(profileID,logsheetID)
+    suspend fun getAllDndEntriesForThisPC(profileID: Int, logsheetID: Int): List<DndAlEntry>? {
+        return dndAlEntryDao.getAllDndEntriesForThisPC(profileID,logsheetID)
+    }
+
+    suspend fun deleteAllDndEntriesFor(profileID: Int, logsheetID: Int){
+        deleteAllDndEntriesFor(profileID,logsheetID)
     }
 
     suspend fun addNewDndEntry(dndAlEntry: DndAlEntry){
@@ -106,10 +104,10 @@ class TabletopGamesDataRepository(
         dndAlEntryDao.delete(dndAlEntry)
     }
     // mtg logsheet functions
-    fun getThisMtgLogSheet(profileID: Int,logsheetID: Int): MTGlogsheet? {
+    suspend fun getThisMtgLogSheet(profileID: Int,logsheetID: Int): MTGlogsheet? {
         return mtgLogSheetDao.getThisMtgLogSheet(profileID,logsheetID)
     }
-    fun getAllMtgLogSheetsFor(profileID: Int): List<MTGlogsheet>? {
+    suspend fun getAllMtgLogSheetsFor(profileID: Int): List<MTGlogsheet>? {
         return mtgLogSheetDao.getAllMtgLogSheetsFor(profileID)
     }
 
@@ -126,20 +124,22 @@ class TabletopGamesDataRepository(
     suspend fun getAllMtgEntriesFor(profileID: Int,logsheetID: Int): List<MtgEntry>? {
         return mtgEntryDao.getAllMtgEntriesFor(profileID,logsheetID)
     }
-    suspend fun getLastMtgEntryFor(profileID: Int,logsheetID: Int): MtgEntry {
+    suspend fun getLastMtgEntryFor(profileID: Int,logsheetID: Int): MtgEntry? {
         val mtgEntries = mtgEntryDao.getAllMtgEntriesFor(profileID,logsheetID)
-        var lastEntry = mtgEntries[0]
-        var thisEntry = mtgEntries[0]
-        mtgEntries.forEach{ entry ->
-            if (entry.dayMonthYear>thisEntry.dayMonthYear){
-                lastEntry = entry
-                thisEntry = entry
+        var lastEntry = mtgEntries?.get(0)
+        var thisEntry = mtgEntries?.get(0)
+        if (mtgEntries != null) {
+            mtgEntries.forEach{ entry ->
+                if (entry.dayMonthYear> thisEntry!!.dayMonthYear ){
+                    lastEntry = entry
+                    thisEntry = entry
+                }
             }
         }
         return lastEntry
     }
-    suspend fun addNewMtgEntry(mtgEntry: MtgEntry){
-        mtgEntryDao.insert(mtgEntry)
+    suspend fun addNewMtgEntry(mtgEntry: MtgEntry): Long {
+       return mtgEntryDao.insert(mtgEntry)
     }
     suspend fun updateThisMtgEntry(mtgEntry: MtgEntry){
         mtgEntryDao.update(mtgEntry)
@@ -153,38 +153,42 @@ class TabletopGamesDataRepository(
             *
             * */
     // players functions
-    fun getPlayersForThisGame(profileID: Int,logsheetID: Int): Players? {
+    fun getPlayerObjectForThisGame(profileID: Int, logsheetID: Int): Players? {
         return playersDao.getPlayersForThis(profileID,logsheetID)
     }
-    suspend fun addNewPlayersForANewGame(players: Players){
-        playersDao.insert(players)
+    suspend fun addNewPlayersForANewGame(players: Players): Long{
+        return playersDao.insert(players)
     }
-    suspend fun updateThisGamesPlayers(players: Players){
+    suspend fun updatePlayersForThisGame(players: Players){
         playersDao.update(players)
     }
     suspend fun deleteThisGamesPlayers(players: Players){
         playersDao.delete(players)
     }
     // reservation functions
+    suspend fun thisDaysReservationsFor(dayMonthYear: String,gameTable: String,seat: String) : List<Reservation>?{
+        return reservationDao.thisDaysReservationsFor(dayMonthYear,gameTable,seat)
+    }
+
     suspend fun getReservationsFor(profileID: Int): List<Reservation>? {
         return reservationDao.getReservationsFor(profileID)
     }
-    fun getThisReservation(id: Int): Reservation? {
+    suspend fun getThisReservation(id: Int): Reservation? {
        return reservationDao.getOneReservationByID(id)
     }
-    fun getReservationsByGameType(gameType: String): List<Reservation>? {
+    suspend fun getReservationsByGameType(gameType: String): List<Reservation>? {
         return reservationDao.getReservationsByGameType(gameType)
     }
-    fun getReservationsByDayMonthYear(dayMonthYear: String): List<Reservation>? {
+    suspend fun getReservationsByDayMonthYear(dayMonthYear: String): List<Reservation>? {
         return reservationDao.getReservationsByDayMonthYear(dayMonthYear)
     }
-    fun getReservationsByTime(time: String): List<Reservation>? {
+    suspend fun getReservationsByTime(time: String): List<Reservation>? {
         return reservationDao.getReservationsByTime(time)
     }
-    fun getReservationsBySeat(seat: String){
+    suspend fun getReservationsBySeat(seat: String){
         reservationDao.getReservationsBySeat(seat)
     }
-    fun getReservationsByDuration(duration: String){
+    suspend fun getReservationsByDuration(duration: String){
         reservationDao.getReservationsByDuration(duration)
     }
     suspend fun addNewReservation(reservation: Reservation){

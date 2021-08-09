@@ -146,7 +146,7 @@
     <string name="games">Games</string>
     <string name="title_activity_mtg_entry">MtgEntry</string>
     <string name="mtgentry">Magic the Gathering Entry</string>
-    <string name="mtgentrywinnertext"> was the winner of game </string>
+    <string name="mtgentrywinnertext"> won game number </string>
     <string name="day1to31">Day? 1 to 31</string>
     <string name="startingclass">Starting Class</string>
     <string name="addplayerbutton">Add Player</string>
@@ -163,4 +163,8 @@
     <string name="none">none</string>
     <string name="emptyfields">Please fill out all fields. Thank you.</string>
     <string name="noblankfields">The fields cannot be blank. Please fill out all fields.</string>
+    <string name="loginnotfound">Login not found.</string>
+    <string name="errorhasoccurred">An error has occurred.</string>
+    <string name="reservationexists">This reservations exists. Please try again.</string>
+    <string name="comingsoon">This feature is coming soon!</string>
 </resources>

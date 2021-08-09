@@ -38,13 +38,10 @@ android {
     }
     packagingOptions{
         exclude 'META-INF/atomicfu.kotlin_module'
-    }
-    /*
-    configurations{
-        implementation.exclude(group: "org.jetbrains", module: "annotations")
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
     }
 
-     */
 }
 
 
@@ -79,6 +76,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02'
     implementation 'androidx.lifecycle:lifecycle-compiler:2.4.0-alpha02'
     implementation "androidx.room:room-ktx:2.4.0-alpha04"
+    implementation 'com.amitshekhar.android:debug-db:1.0.4'
     kapt "androidx.room:room-compiler:2.4.0-alpha04"
     androidTestImplementation "androidx.room:room-testing:2.4.0-alpha04"
     testImplementation 'junit:junit:4.13.2'

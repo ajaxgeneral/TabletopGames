@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -43,11 +44,13 @@ class NewMTGentry() : ComponentActivity() {
 
 @Composable
 fun EditMTGentryScreen(viewModel: MainViewModel){
-    var mtgentry = remember { viewModel.mtgLogSheetEntryBlank }
-    if (viewModel.mtgEntryItemIndex!=-1){
+    var mtgentry = rememberSaveable { viewModel.mtgLogSheetEntryBlank }
+    var winners = ""
+    if (!viewModel.isNewMtgEntry){
         mtgentry = viewModel.mtgLogSheetEntries[viewModel.mtgEntryItemIndex]
+        winners = mtgentry.winner.replace(";","\r")
     }
-    val winner = remember { mutableStateOf(mtgentry.winner) }
+    val winner = rememberSaveable { mutableStateOf(winners) }
     Column(modifier = Modifier
         .padding(5.dp).background(color = colorResource(id = R.color.colorAccent))
         .fillMaxWidth()){
@@ -59,6 +62,7 @@ fun EditMTGentryScreen(viewModel: MainViewModel){
                     viewModel.onWinnerChange(winner.value)
                 },
                 label = { stringResource(R.string.winner) },
+                maxLines = 10,
                 modifier = Modifier.fillMaxWidth()
             )
         }

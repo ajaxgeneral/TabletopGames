@@ -8,7 +8,7 @@ interface PlayersDao {
     @Query("select * from Players where profileID = :profileID and logsheetID = :logsheetID")
     fun getPlayersForThis(profileID: Int,logsheetID: Int) : Players?
     @Insert
-    suspend fun insert(players: Players)
+    suspend fun insert(players: Players) : Long
     @Update
     suspend fun update(players: Players)
     @Delete

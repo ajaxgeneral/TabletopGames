@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -44,13 +45,14 @@ class MtgLogSheet : ComponentActivity() {
 @Composable
 fun MtgLogSheetItemView(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    var logsheet = remember { viewModel.mtgLogSheetBlank }
-    if(viewModel.mtgLogSheetIndex != -1){
-        logsheet = viewModel.mtgLogSheets[viewModel.mtgLogSheetIndex]
+    var playersList = rememberSaveable { viewModel.playersListEmpty }
+    var logsheet = rememberSaveable { viewModel.mtgLogSheetBlank }
+    if(!viewModel.isNewMtgLogSheet){
+        logsheet = viewModel.mtgLogSheet
+        playersList = viewModel.playersList
     }
-    val entries = remember { viewModel.mtgLogSheetEntries }
-    val playersList = remember { logsheet.players.split(";") }
-    var count = remember {0}
+    val entries = rememberSaveable { viewModel.mtgLogSheetEntries }
+    var count = rememberSaveable {0}
 
     Column(modifier = Modifier
         .padding(5.dp)
@@ -64,9 +66,12 @@ fun MtgLogSheetItemView(viewModel: MainViewModel) {
         Text(text = logsheet.dayMonthYear)
         Text(text = stringResource(R.string.players),fontSize = 25.sp,
             color = colorResource(R.color.colorPrimaryDark))
+
         playersList.forEach { player->
             Text(text = player)
         }
+
+
         Divider()
         Text(text = stringResource(R.string.games),fontSize = 25.sp,
             color = colorResource(R.color.colorPrimaryDark))
@@ -152,7 +157,7 @@ fun MtgLogSheetItemView(viewModel: MainViewModel,entry: MtgEntry,index: Int,
         .clickable { viewModel.onMtgEntryItemClicked(index,count) }){
         Text(text = stringResource(R.string.winner)+" of Game "+count,fontSize = 25.sp,
             color = colorResource(R.color.colorPrimaryDark))
-        Text(text = entry.winner)
+        //Text(text = entry.winner)
     }
 }
 

@@ -13,5 +13,5 @@ data class Players (
     @ColumnInfo(name = "logsheetID")
     var logsheetID: Int,
     @ColumnInfo(name = "members")
-    var members: String
+    var members: String // when created is a ; separated list
 )

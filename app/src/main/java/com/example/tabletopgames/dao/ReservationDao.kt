@@ -5,21 +5,22 @@ import com.example.tabletopgames.models.Reservation
 
 @Dao
 interface ReservationDao {
-
+    @Query("select * from Reservation where `table` = :gameTable and seat = :seat and dayMonthYear = :dayMonthYear")
+    suspend fun thisDaysReservationsFor(dayMonthYear: String,gameTable: String,seat: String): List<Reservation>?
     @Query("select * from Reservation where profileID = :profileID")
-    fun getReservationsFor(profileID: Int) : List<Reservation>?
+    suspend fun getReservationsFor(profileID: Int) : List<Reservation>?
     @Query("select * from Reservation where id = :id")
-    fun getOneReservationByID(id: Int) : Reservation?
+    suspend fun getOneReservationByID(id: Int) : Reservation?
     @Query("select * from Reservation where gameType = :gameType")
-    fun getReservationsByGameType(gameType: String) : List<Reservation>?
+    suspend fun getReservationsByGameType(gameType: String) : List<Reservation>?
     @Query("select * from Reservation where dayMonthYear = :dayMonthYear")
-    fun getReservationsByDayMonthYear(dayMonthYear: String) : List<Reservation>?
+    suspend fun getReservationsByDayMonthYear(dayMonthYear: String) : List<Reservation>?
     @Query("select * from Reservation where time = :time")
-    fun getReservationsByTime(time: String) : List<Reservation>?
+    suspend fun getReservationsByTime(time: String) : List<Reservation>?
     @Query("select * from Reservation where seat = :seat")
-    fun getReservationsBySeat(seat:String) : List<Reservation>?
+    suspend fun getReservationsBySeat(seat:String) : List<Reservation>?
     @Query("select * from Reservation where duration = :duration")
-    fun getReservationsByDuration(duration:String) : List<Reservation>?
+    suspend fun getReservationsByDuration(duration:String) : List<Reservation>?
 
 
     @Insert

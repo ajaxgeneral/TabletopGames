@@ -9,13 +9,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DndAlEntryDao {
     @Query("select * from DndAlEntry where profileID = :profileID and logsheetID = :logsheetID")
-    fun getAllDndEntriesFor(profileID: Int,logsheetID: Int) : List<DndAlEntry>?
+    suspend fun getAllDndEntriesForThisPC(profileID: Int, logsheetID: Int) : List<DndAlEntry>?
     @Query("select * from DndAlEntry where profileID = :profileID and logsheetID = :logsheetID ")
-    fun getDndEntriesFor(profileID: Int, logsheetID: Int) : List<DndAlEntry>
+    suspend fun getDndEntriesFor(profileID: Int, logsheetID: Int) : List<DndAlEntry>?
     @Insert
     suspend fun insert(dndAlEntry: DndAlEntry)
     @Update
     suspend fun update(dndAlEntry: DndAlEntry)
     @Delete
     suspend fun delete(dndAlEntry: DndAlEntry)
+    @Query("delete from DndAlEntry where profileID = :profileID and logsheetID = :logsheetID")
+    suspend fun deleteAllDndEntriesFor(profileID: Int, logsheetID: Int)
 }

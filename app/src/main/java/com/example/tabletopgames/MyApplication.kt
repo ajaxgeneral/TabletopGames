@@ -2,7 +2,7 @@ package com.example.tabletopgames
 
 import android.app.Application
 import com.example.tabletopgames.database.TabletopGamesDatabase
-import com.example.tabletopgames.database.TabletopGamesDataRepository
+import com.example.tabletopgames.repository.TabletopGamesDataRepository
 
 
 class MyApplication :Application() {
