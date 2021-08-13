@@ -49,20 +49,30 @@ class NewDNDentry : ComponentActivity() {
 fun EditDNDentryScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var dndentry = remember { viewModel.dndLogSheetEntryBlank }
-    if (viewModel.dndEntryItemIndex != -1 && !viewModel.isNewDndLogSheet ){
-        dndentry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex] }
-    val advname = remember { mutableStateOf("") }
-    val advcode = remember { mutableStateOf("") }
-    val dmdcinumber = remember { mutableStateOf("") }
-    val goldplusminus = remember { mutableStateOf("") }
-    val downtimeplusminus = remember { mutableStateOf("") }
-    val permanentmagicitemsplusminus = remember { mutableStateOf("") }
-    val newclass = remember { mutableStateOf("") }
-    val advnotes = remember { mutableStateOf("") }
-    val levelaccepted = remember { mutableStateOf("") }
+    var advname = remember { mutableStateOf("") }
+    var advcode = remember { mutableStateOf("") }
+    var dmdcinumber = remember { mutableStateOf("") }
+    var goldplusminus = remember { mutableStateOf("") }
+    var downtimeplusminus = remember { mutableStateOf("") }
+    var permanentmagicitemsplusminus = remember { mutableStateOf("") }
+    var newclass = remember { mutableStateOf("") }
+    var advnotes = remember { mutableStateOf("") }
+    var levelaccepted = remember { mutableStateOf("") }
+    if (!viewModel.isNewDndEntry ){
+        dndentry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex]
+        advname = remember { mutableStateOf(dndentry.adventureName) }
+        advcode = remember { mutableStateOf(dndentry.adventureCode) }
+        dmdcinumber = remember { mutableStateOf(dndentry.dmDCInumber) }
+        goldplusminus = remember { mutableStateOf(dndentry.goldPlusMinus) }
+        downtimeplusminus = remember { mutableStateOf(dndentry.downtimePlusMinus) }
+        permanentmagicitemsplusminus = remember { mutableStateOf(dndentry.permanentMagicItemsPlusMinus) }
+        newclass = remember { mutableStateOf(dndentry.newClassLevel) }
+        advnotes = remember { mutableStateOf(dndentry.adventureNotes) }
+        levelaccepted = remember { mutableStateOf(dndentry.levelAccepted) }
+    }
 
     Column(modifier = Modifier
-        .padding(5.dp).background(color = colorResource(id = R.color.colorAccent))
+        .padding(5.dp,bottom = 30.dp).background(color = colorResource(id = R.color.colorAccent))
         .fillMaxWidth().verticalScroll(scrollState)){
         TextField(
             value = advname.value,
@@ -92,7 +102,6 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 )
             }
         )
-
         TextField(
             value = dmdcinumber.value,
             onValueChange = { dmdcinumber.value = it
@@ -107,7 +116,7 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 )
             }
         )
-        if (viewModel.dndEntryItemIndex!=-1){
+        if (!viewModel.isNewDndEntry){
             TextField(
                 value = dndentry.startingLevel,
                 onValueChange = {
@@ -231,7 +240,6 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
                 )
             }
         )
-
         TextField(
             value = advnotes.value,
             onValueChange = { advnotes.value = it
@@ -259,6 +267,24 @@ fun EditDNDentryScreen(viewModel: MainViewModel) {
             ) {
                 Text(
                     text = stringResource(id = R.string.submitbutton),
+                    color = Color.White
+                )
+            }
+            TextButton(
+                onClick = {
+                    viewModel.onLogSheetsPressed()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =
+                    colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp, color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.logsheets),
                     color = Color.White
                 )
             }

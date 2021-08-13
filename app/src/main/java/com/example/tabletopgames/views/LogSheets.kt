@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,9 +50,17 @@ class LogSheets : ComponentActivity() {
 @Composable
 fun LogSheetsList(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    val logsheets = remember { viewModel.logSheetList }
+    val logsheets = viewModel.logSheetList
     Column(modifier = Modifier.padding(5.dp).fillMaxWidth()
         .verticalScroll(scrollState)){
+        /*
+        if (viewModel.errorMessage!=viewModel.none){
+            Text(text = viewModel.errorMessage,textAlign = TextAlign.Center,
+                fontSize = 30.sp,color = colorResource(R.color.blue))
+            Divider()
+        }
+
+         */
         logsheets.forEach{ logsheet ->
             val img = viewModel.getImg(logsheet.gameType)
             LogSheetItem(img,logsheet,viewModel,logsheets.indexOf(logsheet))
@@ -117,7 +126,7 @@ fun LogSheetsList(viewModel: MainViewModel) {
 
 @Composable
 fun LogSheetItem(img: Int, logsheet: LogSheet, viewModel: MainViewModel, index: Int){
-    Row(modifier = Modifier.clickable { viewModel.onLogSheetItemClicked(index) }){
+    Row(modifier = Modifier.clickable { viewModel.onLogSheetListItemClicked(index) }){
         Image(painter = painterResource(img),
             contentDescription = null,
             contentScale = ContentScale.Crop,

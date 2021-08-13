@@ -159,7 +159,7 @@ private fun MainScreenContainer(
             Screen.EditMONOPentryScreen -> EditMONOPentryScreen(viewModel)
             Screen.LoginScreen -> LoginView(viewModel)
             Screen.MyProfileScreen -> MyProfileView(viewModel)
-            Screen.ReservationDetailsScreen -> ReservationDetails(viewModel = viewModel)
+            Screen.ReservationDetailsScreen -> ReservationDetails(viewModel)
             Screen.NewReservationScreen -> NewReservation(viewModel)
             Screen.EditProfileScreen -> EditProfile(viewModel)
             Screen.DndLogSheetScreen -> DndLogSheetItemView(viewModel)

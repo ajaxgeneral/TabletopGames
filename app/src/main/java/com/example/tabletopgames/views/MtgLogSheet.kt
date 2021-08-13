@@ -27,7 +27,7 @@ import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class MtgLogSheet : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
-        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+        ViewModelFactory((application as MyApplication).repository)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,14 +45,17 @@ class MtgLogSheet : ComponentActivity() {
 @Composable
 fun MtgLogSheetItemView(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    var playersList = rememberSaveable { viewModel.playersListEmpty }
-    var logsheet = rememberSaveable { viewModel.mtgLogSheetBlank }
+    var playersList = remember { viewModel.playersListEmpty }
+    var logsheet = remember { viewModel.mtgLogSheetBlank }
+    var entries = remember { viewModel.mtgLogSheetEntriesEmpty }
     if(!viewModel.isNewMtgLogSheet){
-        logsheet = viewModel.mtgLogSheet
-        playersList = viewModel.playersList
+        logsheet = remember { viewModel.mtgLogSheet }
+        playersList = remember { viewModel.playersList }
+        if (!viewModel.mtgLogSheetEntries.isNullOrEmpty()){
+           entries = viewModel.mtgLogSheetEntries
+        }
     }
-    val entries = rememberSaveable { viewModel.mtgLogSheetEntries }
-    var count = rememberSaveable {0}
+    var count = 0
 
     Column(modifier = Modifier
         .padding(5.dp)
@@ -76,9 +79,10 @@ fun MtgLogSheetItemView(viewModel: MainViewModel) {
         Text(text = stringResource(R.string.games),fontSize = 25.sp,
             color = colorResource(R.color.colorPrimaryDark))
         entries.forEach{ entry->
+            count++
             MtgLogSheetItemView(viewModel,entry,entries.indexOf(entry),count)
             Divider()
-            count++
+
         }
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){
@@ -127,6 +131,24 @@ fun MtgLogSheetItemView(viewModel: MainViewModel) {
                     color = Color.White
                 )
             }
+            TextButton(
+                onClick = {
+                    viewModel.onLogSheetsPressed()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =
+                    colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp, color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.logsheets),
+                    color = Color.White
+                )
+            }
             TextButton(onClick = {
                 viewModel.onDeleteMtgLogSheetButtonPressed()
             },
@@ -152,12 +174,16 @@ fun MtgLogSheetItemView(viewModel: MainViewModel) {
 @Composable
 fun MtgLogSheetItemView(viewModel: MainViewModel,entry: MtgEntry,index: Int,
         count: Int){
+
     Column(modifier = Modifier
-        .padding(5.dp).fillMaxWidth()
+        .padding(5.dp)
+        .border(BorderStroke(1.dp, colorResource(R.color.blue_faded)))
+        .fillMaxWidth()
         .clickable { viewModel.onMtgEntryItemClicked(index,count) }){
         Text(text = stringResource(R.string.winner)+" of Game "+count,fontSize = 25.sp,
-            color = colorResource(R.color.colorPrimaryDark))
-        //Text(text = entry.winner)
+            color = colorResource(R.color.colorPrimaryDark)
+            ,modifier = Modifier.padding(3.dp))
+        Text(text = entry.winner,modifier = Modifier.padding(3.dp))
     }
 }
 

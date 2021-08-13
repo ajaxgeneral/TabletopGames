@@ -46,14 +46,21 @@ class NewLogSheet : ComponentActivity() {
 @Composable
 fun EditDndLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
-    var logsheet  = remember { viewModel.dndLogSheetBlank }
-    if(!viewModel.isNewDndLogSheet && viewModel.dndLogSheetItemIndex != -1){
-        logsheet = viewModel.dndLogSheets[viewModel.logsheetItemIndex] }
-    val playerdcinumber = remember { mutableStateOf("") }
-    val charactername = remember { mutableStateOf("") }
-    val characterrace = remember { mutableStateOf("") }
-    val faction = remember { mutableStateOf("") }
-    val classes = remember { mutableStateOf("")}
+    var logsheet  = viewModel.dndLogSheetBlank
+
+    var playerdcinumber = remember { mutableStateOf("") }
+    var charactername = remember { mutableStateOf("") }
+    var characterrace = remember { mutableStateOf("") }
+    var faction = remember { mutableStateOf("") }
+    var classes = remember { mutableStateOf("") }
+    if(!viewModel.isNewDndLogSheet){
+        logsheet = viewModel.dndLogSheet
+         playerdcinumber = remember { mutableStateOf(logsheet.playerDCInumber) }
+         charactername = remember { mutableStateOf(logsheet.characterName) }
+         characterrace = remember { mutableStateOf(logsheet.characterRace) }
+         faction = remember { mutableStateOf(logsheet.faction) }
+         classes = remember { mutableStateOf(logsheet.classes) }
+    }
     Column(modifier = Modifier.padding(5.dp)
         .fillMaxWidth().verticalScroll(scrollState)){
         TextField(
@@ -87,8 +94,7 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
                 color = colorResource(R.color.colorPrimaryDark),
                 modifier = Modifier.fillMaxWidth()) }
         )
-        if(viewModel.isNewDndLogSheet){
-            TextField(
+        TextField(
                 value = classes.value,
                 onValueChange = {
                     classes.value = it
@@ -98,10 +104,6 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
                     color = colorResource(R.color.colorPrimaryDark),
                     modifier = Modifier.fillMaxWidth()) }
             )
-        }else{
-            Text(logsheet.classes,fontSize = 30.sp,
-                color = colorResource(R.color.colorPrimaryDark))
-        }
         TextField(
             value = faction.value,
             onValueChange = {
@@ -126,6 +128,24 @@ fun EditDndLogSheetScreen(viewModel: MainViewModel) {
             ) {
                 Text(
                     text = stringResource(id = R.string.submitbutton),
+                    color = Color.White
+                )
+            }
+            TextButton(
+                onClick = {
+                    viewModel.onLogSheetsPressed()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =
+                    colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp, color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.logsheets),
                     color = Color.White
                 )
             }

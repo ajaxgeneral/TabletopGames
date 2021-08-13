@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DndAlEntryDao {
-    @Query("select * from DndAlEntry where profileID = :profileID and logsheetID = :logsheetID")
-    suspend fun getAllDndEntriesForThisPC(profileID: Int, logsheetID: Int) : List<DndAlEntry>?
     @Query("select * from DndAlEntry where profileID = :profileID and logsheetID = :logsheetID ")
     suspend fun getDndEntriesFor(profileID: Int, logsheetID: Int) : List<DndAlEntry>?
     @Insert

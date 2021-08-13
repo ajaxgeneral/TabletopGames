@@ -72,6 +72,16 @@ fun AppDrawer(viewModel: MainViewModel,currentScreen: Screen,
             }
             closeDrawerAction
         }
+        ScreenNavigationButton(
+            icon = Icons.Filled.AccountCircle,
+            label = stringResource(R.string.logout),
+            isSelected = currentScreen == Screen.MyProfileScreen
+        ) {
+            if (viewModel.loggedIn){
+                viewModel.onLogoutPressed()
+            }
+            closeDrawerAction
+        }
     }
 }
 

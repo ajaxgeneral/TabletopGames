@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MtgEntryDao {
     @Query("select * from MtgEntry where profileID = :profileID and logsheetID = :logsheetID")
-    fun getAllMtgEntriesFor(profileID:Int,logsheetID:Int) : List<MtgEntry>?
-
+    suspend fun getAllMtgEntriesFor(profileID:Int,logsheetID:Int) : List<MtgEntry>?
     @Insert
     suspend fun insert(mtgEntry: MtgEntry): Long
     @Update

@@ -55,13 +55,23 @@ class EditProfile : ComponentActivity() {
 @Composable
 fun EditProfile(viewModel: MainViewModel) {
     var scope = rememberCoroutineScope()
-    var profile = viewModel.myProfile
-    var login = viewModel.myLogin
-    val firstNameq = remember{ mutableStateOf("") }
-    val lastNameq = remember{ mutableStateOf("") }
-    val emailq = remember{ mutableStateOf("") }
-    val phoneq = remember{ mutableStateOf("") }
-    val passwordq = remember{ mutableStateOf("") }
+    var profile = viewModel.profileBlank
+    var login = viewModel.loginBlank
+    var firstNameq = remember{ mutableStateOf("") }
+    var lastNameq = remember{ mutableStateOf("") }
+    var emailq = remember{ mutableStateOf("") }
+    var phoneq = remember{ mutableStateOf("") }
+    var passwordq = remember{ mutableStateOf("") }
+
+    if (!viewModel.newProfile){
+        profile = viewModel.myProfile
+        login = viewModel.myLogin
+        firstNameq = remember{ mutableStateOf(profile.firstName) }
+        lastNameq = remember{ mutableStateOf(profile.lastName) }
+        emailq = remember{ mutableStateOf(profile.email) }
+        phoneq = remember{ mutableStateOf(profile.phone) }
+        passwordq = remember{ mutableStateOf(login.password) }
+    }
 
     Column(modifier = Modifier.fillMaxSize(1f)
         .padding(5.dp).background(colorResource(R.color.colorAccent))) {
@@ -113,7 +123,9 @@ fun EditProfile(viewModel: MainViewModel) {
             passwordq.value = it
             viewModel.onPasswordChange(passwordq.value)
         },
-        label = { Text(viewModel.myLogin.password) },
+        label = { if(!viewModel.isNewLogin)Text(viewModel.myLogin.password)else{
+            Text(stringResource(R.string.password))
+        } },
         modifier = Modifier.fillMaxWidth()
     )
         Row(modifier = Modifier.fillMaxWidth(),

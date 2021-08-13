@@ -54,7 +54,7 @@ fun DndEntryScreen(viewModel: MainViewModel){
         entry = viewModel.dndLogSheetEntries[viewModel.dndEntryItemIndex]
     }
     Column(modifier = Modifier
-        .padding(5.dp)
+        .padding(5.dp,bottom = 30.dp)
         .background(color = colorResource(id = R.color.colorAccent))
         .fillMaxWidth().verticalScroll(scrollState)) {
         Row(modifier = Modifier.fillMaxWidth(1f)) {
@@ -264,6 +264,24 @@ fun DndEntryScreen(viewModel: MainViewModel){
             ) {
                 Text(
                     text = stringResource(id = R.string.home),
+                    color = Color.White
+                )
+            }
+            TextButton(
+                onClick = {
+                    viewModel.onLogSheetsPressed()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =
+                    colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp, color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.logsheets),
                     color = Color.White
                 )
             }

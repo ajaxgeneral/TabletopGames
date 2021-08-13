@@ -167,4 +167,5 @@
     <string name="errorhasoccurred">An error has occurred.</string>
     <string name="reservationexists">This reservations exists. Please try again.</string>
     <string name="comingsoon">This feature is coming soon!</string>
+    <string name="logout">Logout</string>
 </resources>

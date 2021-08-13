@@ -19,6 +19,14 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
 
 
     // helper
+    private val em = ErrorMessage()
+    private val err = em.err
+    private val noblanks = em.noblanks
+    private val errlogin = em.errlogin
+    private val errprofile = em.errprofile
+    private val errres = em.errres
+    private val comesoon = em.comesoon
+    val none = em.none
 
     fun getImg(gameType: String): Int {
         return when (gameType) {
@@ -47,17 +55,11 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         }
     }
 
-    private fun getNewID(): String {
-        return Calendar.getInstance().timeInMillis.toString() +
-                " " + UUID.randomUUID().toString()
-    }
-
     private fun dateCreated(): String {
         val cal: Calendar = Calendar.getInstance()
         val today: Int = cal.get(Calendar.DAY_OF_MONTH)
         val thisMonth: Int = cal.get(Calendar.MONTH) + 1
         val thisYear: Int = cal.get(Calendar.YEAR)
-
         return today.toString() + " " + getMonthName(thisMonth.toString()) + " " + thisYear.toString()
     }
 
@@ -65,9 +67,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     private var formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
     private var todayF = currentDate.format(formatter)
     private fun getToday(): String { return todayF }
-    var errorMessage = R.string.none.toString()
-
-
+    var errorMessage = none
 
     //generic navigation functions
     fun backButton() {
@@ -115,28 +115,30 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
 
     //login stuff
     val loginBlank = MyLogin("", "")
-    var myLogin = loginBlank
+    lateinit var myLogin: MyLogin
     private val _email = MutableLiveData("")
     val email: LiveData<String> = _email
     private val _password = MutableLiveData("")
     val password: LiveData<String> = _password
     var loggedIn = false
-    private val loginFailMessage = "Failed to register this user."
-    private val invalidEmailPassword = "Invalid email or password."
     var newLogin = loginBlank
+    var isNewLogin = true
     var emailExists = false
 
-    fun getUserData() = viewModelScope.launch {
+    private fun getUserData(){
+        errorMessage = none
         if (loggedIn){
+            // ensure lists are clear
+            reservationsListOf.clear()
+            logSheetList.clear()
             // make calls to get this users records from the ROOM.
             buildReservationList()
             buildLogSheetList()
-            buildDndLogSheets()
-            buildMtgLogSheets()
         }
     }
 
     private fun emailExists() = viewModelScope.launch{
+        errorMessage = none
         // look for email.value in MyLogin ROOM
         // foundEmail = ROOM.MyLogin where email == email.value
         try {
@@ -144,7 +146,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
             if (result != null) {
                 if (result.contains(myLogin)){ emailExists = true }
             }
-        } catch (ex: Exception){ errorMessage = R.string.errorhasoccurred.toString() }
+        } catch (ex: Exception){ errorMessage = "$err viewModel151" }
     }
 
     fun onEmailChange(newEmail: String) {
@@ -155,6 +157,19 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         _password.value = newPassword
     }
 
+    fun onLogoutPressed(){
+        errorMessage = none
+        loggedIn = false
+        newProfile = true
+        myLogin = loginBlank
+        myProfile = profileBlank
+        logSheetList.clear()
+        dndLogSheetEntries.clear()
+        mtgLogSheetEntries.clear()
+        reservationsListOf.clear()
+        Router.navigateTo(Screen.LoginScreen)
+    }
+
     fun onLoginPressed() = viewModelScope.launch {
         // validate input
         val isValid = isValidLogin(email.value.toString(),password.value.toString())
@@ -162,18 +177,26 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
             newLogin.email = email.value.toString()
             newLogin.password = password.value.toString()
         }
-        // look for newLogin in ROOM.MyLogin where email == newLogin.email
-        //                                  && password == newLogin.password
-        try{
+        // reset globals
+        errorMessage = none
+        loggedIn = false
+        myLogin = loginBlank
+        myProfile = profileBlank
+        reservationsListOf.clear()
+        logSheetList.clear()
+        dndLogSheetEntries.clear()
+        mtgLogSheetEntries.clear()
+        // get the login and profile from ROOM
+        try {
             myLogin = repo.findMyLogin(newLogin)!!
-        } catch (ex: Exception){ errorMessage = R.string.loginnotfound.toString() }
+            myProfile = repo.getMyProfile(myLogin.email)!!
+        } catch (ex: Exception){
+            errorMessage = err
+        }
+        // ensure this login and profile exists
+        // and their emails match
         if(!myLogin.equals(null)){
             if(myLogin == newLogin){
-                try{
-                    myProfile = repo.getMyProfile(myLogin.email)!!
-                } catch (ex: Exception){
-                    errorMessage = R.string.loginnotfound.toString()
-                }
                 testProfile()
             } else { onLoginFailed() }
         } else { onLoginFailed() }
@@ -185,7 +208,8 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         if (myProfile.email != myLogin.email){
             loggedIn = false
             newProfile = true
-            myProfile = testProfile
+            myProfile = profileBlank
+            Router.navigateTo(Screen.EditProfileScreen)
         } else {
             isNewReservation = true
             getUserData()
@@ -193,15 +217,19 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     private fun onLoginFailed() {
-        Log.e(TAG,R.string.invalidlogin.toString())
+        Log.e(TAG,errlogin)
         loggedIn = false
+        newProfile = true
+        isNewLogin = true
         onCreateProfilePressed()
     }
 
     private fun addNewLogin(login: MyLogin) = viewModelScope.launch{
+        errorMessage = none
         // add this object to the Room
         try{ repo.addNewLogin(login) }
-        catch (ex: Exception){ errorMessage = R.string.errorhasoccurred.toString() }
+        catch (ex: Exception){ errorMessage = "$err viewModel238"
+        }
     }
 
     fun isValidLogin(email: String, password: String): Boolean = when {
@@ -213,10 +241,6 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     //profile stuff
     val profileBlank = MyProfile(0, "", "", "", "",User.PUBLIC)
     var newProfile = true
-    val testProfile = MyProfile(
-        1, "Test", "Profile",
-        "test@gmail.com", "8178675309",User.PUBLIC
-    )
     var myProfile = profileBlank
     private val _firstName = MutableLiveData("")
     val firstName: LiveData<String> = _firstName
@@ -238,51 +262,51 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onDeleteProfilePressed()= viewModelScope.launch {
+        errorMessage = none
        try {
            repo.deleteThisProfile(myProfile)
            repo.deleteThisLogin(myLogin)
-           myLogin=loginBlank
-           myProfile=profileBlank
-           loggedIn=false
-           newProfile=true
-           Router.navigateTo(Screen.LoginScreen)
-       } catch (ex: Exception){
-           errorMessage = R.string.errorhasoccurred.toString()
-       }
+       } catch (ex: Exception){ errorMessage = "$err viewModel286" }
+        myLogin=loginBlank
+        myProfile=profileBlank
+        loggedIn=false
+        newProfile=true
+        Router.navigateTo(Screen.LoginScreen)
     }
 
     fun onEditProfilePressed() {
+        errorMessage = none
         newProfile = false
         Router.navigateTo(Screen.EditProfileScreen)
     }
 
     fun onCreateProfilePressed() {
+        errorMessage = none
+        newProfile = true
         myLogin = MyLogin( "", "Password")
-        myProfile = MyProfile(
-            0, "First Name",
-            "Last Name", "Email", "Phone",User.PUBLIC
-        )
+        myProfile = MyProfile(0, "First Name","Last Name","Email","Phone",User.PUBLIC)
         newProfile = true
         Router.navigateTo(Screen.EditProfileScreen)
     }
 
     fun onSubmitProfilePressed() = viewModelScope.launch{
+        errorMessage = none
         if (newProfile){
             if (!profileIsEmpty()){
                 emailExists()
                 // create myProfile object and myLogin object
                 if(emailExists){
-                    errorMessage = R.string.emailexists.toString()
+                    errorMessage = "$errprofile viewModel 294"
                     Router.navigateTo(Screen.EditProfileScreen)
                 } else {
-                    errorMessage = R.string.none.toString()
+                    errorMessage = none
                     createProfileLoginObjects()
                     loggedIn = true
                     newProfile = false
                     Router.navigateTo(Screen.MyProfileScreen)
                 }
             } else {
-                errorMessage = R.string.noblankfields.toString()
+                errorMessage = noblanks
                 Router.navigateTo(Screen.EditProfileScreen)
             }
         } else {
@@ -291,7 +315,8 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
                 repo.updateThisProfile(myProfile)
                 repo.updateThisLogin(myLogin)
                 Router.navigateTo(Screen.MyProfileScreen)
-            } catch (ex: Exception){ errorMessage = R.string.errorhasoccurred.toString() }
+            } catch (ex: Exception){ errorMessage = "$err viewModel 313"
+            }
         }
     }
 
@@ -332,11 +357,12 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     private suspend fun addNewProfile(profile: MyProfile)= viewModelScope.launch {
+        errorMessage = none
         // add myProfile to the ROOM
         try {
             repo.addNewProfile(profile)
         } catch (ex: Exception){
-            errorMessage = R.string.errorhasoccurred.toString()
+            errorMessage = "$err viewModel360"
         }
     }
 
@@ -385,8 +411,9 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     )
     var dummyReservation = Reservation(0,0,GameType().DND,dateCreated(),
             "12:00 AM","1","2","4")
-    private var newReservation = reservationBlank
-    var reservationsListOf = mutableListOf<Reservation>()
+    var reservation = reservationBlank
+    val reservationListEmpty = mutableListOf<Reservation>()
+    var reservationsListOf = reservationListEmpty
     private var reservationExists = false
 
     fun onGameTypeChange(gameType: String) {
@@ -435,6 +462,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onSubmitReservationButtonPressed() = viewModelScope.launch {
+        errorMessage = none
         val dayV = day.value.toString()
         val monthV = month.value.toString()
         val year = getNewResYear(dayV, monthV)
@@ -442,42 +470,44 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
 
         if (isNewReservation) {
             if(isValidReservation()){
-                newReservation.gameType = gametype.value.toString()
-                newReservation.dayMonthYear = dayMonthYear
-                newReservation.time = time.value.toString()
-                newReservation.gameTable = table.value.toString()
-                newReservation.seat = seat.value.toString()
-                newReservation.duration = duration.value.toString()
-                newReservation.profileID = myProfile.id
+                reservation.gameType = gametype.value.toString()
+                reservation.dayMonthYear = dayMonthYear
+                reservation.time = time.value.toString()
+                reservation.gameTable = table.value.toString()
+                reservation.seat = seat.value.toString()
+                reservation.duration = duration.value.toString()
+                reservation.profileID = myProfile.id
                 //if no reservation with this date, time, and location exists
                 //then add to Reservation Realm and add to reservationsListOf
-                try {
-                    val reservationSearchResults: List<Reservation> =
-                        repo.thisDaysReservationsFor(newReservation.dayMonthYear,newReservation.gameTable,newReservation.seat)!!
-                    // compare newReservation to seatingChart to see if it fits
-                    // if not send suggestions message
-                    reservationSearchResults.forEach{ existingReservation ->
-                        if (existingReservation.dayMonthYear==newReservation.dayMonthYear &&
-                            existingReservation.gameTable==newReservation.gameTable &&
-                            existingReservation.seat==newReservation.seat &&
-                            existingReservation.time==newReservation.time){
-                            reservationExists=true
-                        }
+                var reservationSearchResults: List<Reservation>? = null
+                    try {
+                        reservationSearchResults = repo.thisDaysReservationsFor(reservation.dayMonthYear,reservation.gameTable,reservation.seat)!!
+                    } catch (ex: Exception){ errorMessage = "$err viewmodel 479" }
+                // compare newReservation to seatingChart to see if it fits
+                // if not send suggestions message
+                reservationSearchResults?.forEach{ existingReservation ->
+                    if (existingReservation.dayMonthYear==reservation.dayMonthYear &&
+                        existingReservation.gameTable==reservation.gameTable &&
+                        existingReservation.seat==reservation.seat &&
+                        existingReservation.time==reservation.time){
+                        reservationExists=true
                     }
-                    if (reservationExists) {
-                        errorMessage = R.string.reservationexists.toString()
-                        Router.navigateTo(Screen.NewReservationScreen)
-                    } else {
-                        repo.addNewReservation(newReservation)
-                        reservationsListOf.add(newReservation)
-                        // send details message to Admin of success
-                        // update reservation seating chart
+                }
+                if (reservationExists) {
+                    errorMessage = errres
+                    Router.navigateTo(Screen.NewReservationScreen)
+                } else {
+                   try {
+                       repo.addNewReservation(reservation)
+                       reservationsListOf.add(reservation)
+                   } catch (ex: Exception){ errorMessage = "$err viewmodel 502"}
+                    // send details message to Admin of success
+                    // update reservation seating chart
 
-                        Router.navigateTo(Screen.ReservationsScreen)
-                    }
-                } catch (ex: Exception){ errorMessage = R.string.errorhasoccurred.toString() }
+                    Router.navigateTo(Screen.ReservationsScreen)
+                }
             } else {
-                errorMessage = R.string.noblankfields.toString()
+                errorMessage = noblanks
                 Router.navigateTo(Screen.NewReservationScreen)
             }
         } else {
@@ -501,9 +531,9 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
             }
             errorMessage = try {
                 repo.updateThisReservation(reservationsListOf[reservationsItemIndex])
-                R.string.none.toString()
-            } catch (ex: Exception){ R.string.errorhasoccurred.toString() }
-            if (errorMessage==R.string.errorhasoccurred.toString()){
+                none
+            } catch (ex: Exception){ err }
+            if (errorMessage == err){
                 Router.navigateTo(Screen.NewReservationScreen)
             }
             Router.navigateTo(Screen.ReservationsScreen)
@@ -527,50 +557,57 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         if (time.value == "") {
             isValidReservation = false
         }
-        errorMessage = if (!isValidReservation){ R.string.noblankfields.toString() }
-                        else { R.string.none.toString() }
+        errorMessage = if (!isValidReservation){ noblanks }
+                        else { none }
         return isValidReservation
     }
 
     fun onEditReservationButtonPressed() {
+        errorMessage = none
         isNewReservation = false
         Router.navigateTo(Screen.NewReservationScreen)
     }
 
     fun onNewReservationButtonPressed() {
+        errorMessage = none
         reservationsItemIndex = -1
         isNewReservation = true
         Router.navigateTo(Screen.NewReservationScreen)
     }
 
     fun onDeleteReservationButtonPressed() = viewModelScope.launch {
+        errorMessage = none
         //delete reservationsListOf[itemIndex]
         //remove It from Room
         try {
             repo.deleteThisReservation(reservationsListOf[reservationsItemIndex])
             reservationsListOf.removeAt(reservationsItemIndex)
             isNewReservation = true
-        } catch (ex: Exception){ errorMessage = R.string.errorhasoccurred.toString() }
+        } catch (ex: Exception){ errorMessage = "$err viewModel598"
+        }
         Router.navigateTo(Screen.ReservationsScreen)
     }
 
     fun onReservationListItemClicked(index: Int) {
+        errorMessage = none
         reservationsItemIndex = index
+        reservation = reservationsListOf[index]
         Router.navigateTo(Screen.ReservationDetailsScreen)
     }
 
-
-    private suspend fun buildReservationList()= viewModelScope.launch {
+    private fun buildReservationList()= viewModelScope.launch {
         try {
             reservationsListOf = repo.getReservationsFor(myProfile.id) as MutableList<Reservation>
         } catch (ex: java.lang.Exception){
-            errorMessage = R.string.errorhasoccurred.toString()
-        }
-        if (reservationsListOf.isEmpty()){
-            // addDummyItem(emptyList<Object>): List<Object> where .size() == 1
-            reservationsListOf.add(dummyReservation)
+            errorMessage = "$err viewModel608"
         }
     }
+
+
+
+
+
+
 
     /*
     *
@@ -605,59 +642,37 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     var logSheetItemBlank = LogSheet(0, 0, "", "")
     var logSheetItem = logSheetItemBlank
     var logsheetItemIndex = -1
+
     private fun buildLogSheetList() = viewModelScope.launch {
         try {
             logSheetList = repo.getLogSheetsFor(myProfile.id)?.toMutableList()!!
         } catch (ex: Exception){
-            errorMessage = R.string.errorhasoccurred.toString()
-        }
-        if (logSheetList.isEmpty()){
-            //add dummy item to list
-            logSheetList.add(dummyLogSheet)
+            errorMessage = "$err viewModel656"
         }
     }
 
-    fun onLogSheetItemClicked(index: Int)= viewModelScope.launch {
+    fun onLogSheetListItemClicked(index: Int) = viewModelScope.launch{
         logSheetItem = logSheetList[index]
+        var playerObject = playersBlank
         logsheetItemIndex = index
         when (logSheetItem.gameType) {
             GameType().DND -> {
+                isNewDndLogSheet = false
                 try {
-                    dndLogSheets.forEach{ logsheet->
-                        if (logSheetItem.id==logsheet.id){
-                            dndLogSheetIndex = dndLogSheets.indexOf(logsheet)
-                        }
-                    }
-                    dndLogSheet = dndLogSheets[dndLogSheetIndex]
-                    dndLogSheetEntries = repo.getAllDndEntriesForThisPC(myProfile.id,logSheetItem.id) as MutableList<DndAlEntry>
-                    isNewDndLogSheet = false
-                    errorMessage = R.string.none.toString()
-                    Router.navigateTo(Screen.DndLogSheetScreen)
-                } catch (ex: Exception){
-                    errorMessage = R.string.errorhasoccurred.toString()
-                }
+                    dndLogSheet = repo.getThisDndLogSheet(logSheetItem.profileID,logSheetItem.id)!!
+                    dndLogSheetEntries = repo.getAllDndEntriesForThisPC(logSheetItem.profileID,logSheetItem.id) as MutableList<DndAlEntry>
+                } catch (ex: Exception){ errorMessage = "$err viewmodel 655" }
+                Router.navigateTo(Screen.DndLogSheetScreen)
             }
             GameType().MTG -> {
+                isNewMtgLogSheet = false
                 try {
-                    mtgLogSheets.forEach{ logsheet ->
-                        if (logSheetItem.id==logsheet.id){
-                            mtgLogSheetIndex = mtgLogSheets.indexOf(logsheet)
-                        }
-                    }
-                    mtgLogSheet = mtgLogSheets[mtgLogSheetIndex]
-                    mtgLogSheetEntries = repo.getAllMtgEntriesFor(myProfile.id,logSheetItem.id) as MutableList<MtgEntry>
-                    myPlayers = repo.getPlayerObjectForThisGame(myProfile.id,mtgLogSheet.id)!!
-                    playersList = myPlayers.members.split(";") as MutableList<String>
-                    isNewMtgLogSheet = false
-                    errorMessage = R.string.none.toString()
-                    Router.navigateTo(Screen.MtgLogSheetScreen)
-                } catch (ex: Exception){
-                    errorMessage = R.string.errorhasoccurred.toString()
-                }
-            }
-            GameType().MONOP -> {
-                Router.navigateTo(Screen.LogSheetsScreen)
-                errorMessage = R.string.comingsoon.toString()
+                    mtgLogSheet = repo.getThisMtgLogSheet(logSheetItem.profileID,logSheetItem.id)!!
+                    mtgLogSheetEntries = repo.getAllMtgEntriesFor(logSheetItem.profileID,logSheetItem.id) as MutableList<MtgEntry>
+                    playerObject = repo.getPlayerObjectForThisGame(logSheetItem.profileID,logSheetItem.id)!!
+                } catch (ex: Exception){ errorMessage = "$err viewmodel 662" }
+                playersList = playerObject.members.split(";") as MutableList<String>
+                Router.navigateTo(Screen.MtgLogSheetScreen)
             }
             else -> Router.navigateTo(Screen.HomeScreen)
         }
@@ -694,11 +709,10 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     fun onFactionChange(faction: String) {
         _faction.value = faction
     }
-
-
     var isNewDndLogSheet = false
 
     fun onNewDndLogSheetButtonPressed() {
+        errorMessage = none
         isNewDndLogSheet = true
         dndLogSheetEntries.clear()
         dndEntryItemIndex = -1
@@ -707,13 +721,13 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onNewMtgLogSheetButtonPressed() {
+        errorMessage = none
         isNewMtgLogSheet = true
+        mtgLogSheetEntries.clear()
         mtgEntryItemIndex = -1
         logsheetItemIndex = -1
         Router.navigateTo(Screen.EditMtgLogSheetScreen)
     }
-
-
 
     var dndLogSheetBlank = DndAlLogSheet(0,
         0,GameType().DND, "",
@@ -756,12 +770,6 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         _dmdcinumber.value = number
     }
 
-    private val _levelaccepted = MutableLiveData("")
-    val levelaccepted: LiveData<String> = _levelaccepted
-    fun onLevelAcceptedChange(yn: String) {
-        _levelaccepted.value = yn
-    }
-
     private val _goldplusminus = MutableLiveData("")
     val goldplusminus: LiveData<String> = _goldplusminus
     fun onGoldPlusMinusChange(gold: String) {
@@ -791,244 +799,111 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     fun onAdvNotesChange(notes: String) {
         _advnotes.value = notes
     }
-    private fun setClassesRaw(newClass: String,logsheetID: Int){
-        var classesRaw = ""
-        classesRaw += newClass
-        for (i in 0 until dndLogSheets.size) {
-            if (dndLogSheets[i].id == logsheetID) {
-                dndLogSheets[i].classes = classesRaw
-            }
-        }
-    }
-    private fun getStartingLevel(logsheetID: Int): String {
-        var latestEntry = dndLogSheetEntryBlank
-        var firstEntry = dndLogSheetEntries[0]
-        var dnd = dndLogSheetBlank
-        //create List of classes and count members
-        var classesRaw = ""
-        dndLogSheets.forEach { logsheet ->
-            if (logsheet.id == logsheetID) {
-                dnd = logsheet
-                classesRaw = logsheet.classes
-            }
-        }
-        val classesList = classesRaw.split(";")
-        var startinglevel = classesList.count()
-        var startlevel = ""
 
-        dndLogSheetEntries.forEach { entry ->
-            if (entry.id == logsheetID) {
-                if (entry.dayMonthYear > firstEntry.dayMonthYear) {
-                    latestEntry = entry
-                    firstEntry = entry
-                }
-            }
+    private fun getStartingLevel(): String {
+        var startlvl = "1"
+        var count = 0
+        var listOfClasses: List<String>? = null
+        if (!dndLogSheetEntries.isNullOrEmpty()){
+            listOfClasses = dndLogSheet.classes.split(";")
+            count = listOfClasses.size
         }
-        when (latestEntry.newClassLevel) {
-            "Barbarian" -> {
-                startinglevel++
-                classesRaw += "Barbarian;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Cleric" -> {
-                startinglevel++
-                classesRaw += "Cleric;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Fighter" -> {
-                startinglevel++
-                classesRaw += "Fighter;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Monk" -> {
-                startinglevel++
-                classesRaw += "Monk;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Paladin" -> {
-                startinglevel++
-                classesRaw = classesRaw + "Paladin"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Rogue" -> {
-                startinglevel++
-                classesRaw += "Rogue;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Sorcerer" -> {
-                startinglevel++
-                classesRaw += "Sorcerer;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-            "Wizard" -> {
-                startinglevel++
-                classesRaw += "Wizard;"
-                for (i in 0 until dndLogSheets.size) {
-                    if (dndLogSheets[i].id == logsheetID) {
-                        dndLogSheets[i].classes = classesRaw
-                    }
-                }
-            }
-        }
-        startlevel = startinglevel.toString()
-        return startlevel
+        startlvl = count.toString()
+        return startlvl
     }
 
-    private fun getStartingGold(logsheetID: Int): String {
+    private fun getStartingGold(): String {
         var startgold = ""
         var startinggold = 0
-        var latestEntry = dndLogSheetEntryBlank
-        var firstEntry = dndLogSheetEntries[0]
-        dndLogSheetEntries.forEach { entry ->
-            if (entry.logsheetID == logsheetID) {
-                if (entry.dayMonthYear > firstEntry.dayMonthYear) {
-                    latestEntry = entry
-                    firstEntry = entry
-                }
+        if (!dndLogSheetEntries.isNullOrEmpty()){
+            dndLogSheetEntries.forEach{ entry ->
+                startinggold += entry.goldPlusMinus.toInt()
             }
         }
-        startgold = latestEntry.newGoldTotal
+        startgold = startinggold.toString()
         return startgold
     }
 
-    private fun getStartingDowntime(logsheetID: Int): String {
+    private fun getStartingDowntime(): String {
         var startdowntime = ""
         var startingdowntime = 0
-        var latestEntry = dndLogSheetEntryBlank
-        var firstEntry = dndLogSheetEntries[0]
-        dndLogSheetEntries.forEach { entry ->
-            if (entry.logsheetID == logsheetID) {
-                if (entry.dayMonthYear > firstEntry.dayMonthYear) {
-                    latestEntry = entry
-                    firstEntry = entry
-               }
+        if (!dndLogSheetEntries.isNullOrEmpty()){
+            dndLogSheetEntries.forEach{ entry ->
+                startingdowntime += entry.downtimePlusMinus.toInt()
             }
         }
-        startdowntime = latestEntry.newDowntimeTotal
+        startdowntime = startingdowntime.toString()
         return startdowntime
     }
 
-    fun getStartingMagicItems(logsheetID: Int): String {
+    fun getStartingMagicItems(): String {
         var startmagicitems = ""
         var startingmagicitems = 0
-        var latestEntry = dndLogSheetEntryBlank
-        var firstEntry = dndLogSheetEntries[0]
-        //dndLogSheetEntries = getDndEntries(logsheetID)
-        dndLogSheetEntries.forEach { entry ->
-            if (entry.logsheetID == logsheetID) {
-                if (entry.dayMonthYear > firstEntry.dayMonthYear) {
-                    latestEntry = entry
-                    firstEntry = entry
-                }
+        if (!dndLogSheetEntries.isNullOrEmpty()){
+            dndLogSheetEntries.forEach{ entry ->
+                startingmagicitems += entry.permanentMagicItemsPlusMinus.toInt()
             }
         }
-        startmagicitems = latestEntry.newPermanentMagicItemTotal
+        startmagicitems = startingmagicitems.toString()
         return startmagicitems
     }
 
-
     fun onEditDndLogSheetButtonPressed() {
+        errorMessage = none
         isNewDndLogSheet = false
         Router.navigateTo(Screen.EditDndLogSheetScreen)
     }
 
     fun onDeleteDndLogSheetButtonPressed()= viewModelScope.launch {
+        errorMessage = none
         isNewDndLogSheet = true
-        repo.deleteThisDndLogSheet(dndLogSheets[dndLogSheetIndex])
+        repo.deleteThisDndLogSheet(dndLogSheet)
         repo.deleteThisLogSheet(logSheetList[logsheetItemIndex])
-        repo.deleteAllDndEntriesFor(myProfile.id,dndLogSheets[dndLogSheetIndex].id)
-        dndLogSheets.removeAt(dndLogSheetIndex)
+        repo.deleteAllDndEntriesFor(myProfile.id,dndLogSheet.id)
         logSheetList.removeAt(logsheetItemIndex)
         dndLogSheetEntries.clear()
         Router.navigateTo(Screen.LogSheetsScreen)
     }
 
     fun onSubmitDndLogSheetButtonPressed() = viewModelScope.launch{
-        var newDndLogSheet = dndLogSheetBlank
-        var newLogSheet = dummyLogSheet
-        // build a DndAlLogSheet object
-        // insert it into Room
-        // and add it to dndLogSheets
-        try {
-            if (isNewDndLogSheet) { //new logsheet add to dndLogSheets and logsheets
-                // create new LogSheet
-                newLogSheet.gameType = GameType().DND
-                newLogSheet.profileID = myProfile.id
-                newLogSheet.dateCreated = dateCreated()
-                // add it to Room
-                newLogSheet.id = repo.addNewLogSheet(newLogSheet).toInt()
-                // use it.id to create child logsheets
-                newDndLogSheet.id = newLogSheet.id
-                newDndLogSheet.gameType = newLogSheet.gameType
-                newDndLogSheet.profileID = newLogSheet.profileID
-                newDndLogSheet.playerDCInumber = playerdcinumber.value.toString()
-                newDndLogSheet.characterName = charactername.value.toString()
-                newDndLogSheet.characterRace = characterrace.value.toString()
-                newDndLogSheet.classes = classes.value.toString()
-                newDndLogSheet.faction = faction.value.toString()
+        errorMessage = none
+        if (isNewDndLogSheet) { //new logsheet add to dndLogSheets and logsheets
+            // create new LogSheet
+            var newLogSheet = LogSheet(0,myProfile.id,GameType().DND,dateCreated())
+            // add it to Room
+           try {
+               newLogSheet.id = repo.addNewLogSheet(newLogSheet).toInt()
+           } catch (ex: Exception){ errorMessage = "$err viewModel 1011" }
+            // use it.id to create child logsheets
+            var newDndLogSheet = DndAlLogSheet(
+                newLogSheet.id,newLogSheet.profileID,
+                newLogSheet.gameType,playerdcinumber.value.toString(),charactername.value.toString(),
+                characterrace.value.toString(),classes.value.toString(),faction.value.toString()
+            )
+            try {
                 repo.addNewDndLogSheet(newDndLogSheet)
-                dndLogSheets.add(newDndLogSheet)
-                logSheetList.add(newLogSheet)
-            } else { // old logsheet edit at logsheetItemIndex
-                if (!playerdcinumber.equals("")) {
-                    dndLogSheets[dndLogSheetIndex].playerDCInumber = playerdcinumber.value.toString()
-                }
-                if (!charactername.equals("")) {
-                    dndLogSheets[dndLogSheetIndex].characterName = charactername.value.toString()
-                }
-                if (!characterrace.equals("")) {
-                    dndLogSheets[dndLogSheetIndex].characterRace = characterrace.value.toString()
-                }
-                if (!faction.equals("")) {
-                    dndLogSheets[dndLogSheetIndex].faction = faction.value.toString()
-                }
-                repo.updateThisDndLogSheet(dndLogSheets[dndLogSheetIndex])
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1020"}
+            logSheetList.add(newLogSheet)
+            errorMessage = none
+        } else { // old logsheet edit at logsheetItemIndex
+            if (!playerdcinumber.equals("")) {
+                dndLogSheet.playerDCInumber = playerdcinumber.value.toString()
             }
-            Router.navigateTo(Screen.LogSheetsScreen)
-        } catch (ex: Exception){
-            errorMessage = R.string.errorhasoccurred.toString()
+            if (!charactername.equals("")) {
+                dndLogSheet.characterName = charactername.value.toString()
+            }
+            if (!characterrace.equals("")) {
+                dndLogSheet.characterRace = characterrace.value.toString()
+            }
+            if (!faction.equals("")) {
+                dndLogSheet.faction = faction.value.toString()
+            }
+            try {
+                repo.updateThisDndLogSheet(dndLogSheet)
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 905" }
+            errorMessage = none
         }
         Router.navigateTo(Screen.LogSheetsScreen)
-    }
-
-    // use Room to build this list
-    var dndLogSheets = mutableListOf<DndAlLogSheet>()
-    var dndLogSheetIndex = -1
-    var logsheet_id = 0
-    private fun buildDndLogSheets() = viewModelScope.launch {
-        try {
-            dndLogSheets = repo.getAllDndLogSheetsFor(myProfile.id) as MutableList<DndAlLogSheet>
-        } catch (ex: Exception){
-            errorMessage = R.string.errorhasoccurred.toString()
-        }
     }
 
     // user Room to build this list
@@ -1036,6 +911,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     var isNewDndEntry = false
 
     fun onDndEntryItemClicked(index: Int) {
+        errorMessage = none
         dndEntryItemIndex = index
         dndLogSheetEntry = dndLogSheetEntries[index]
         Router.navigateTo(Screen.DndEntryScreen)
@@ -1063,30 +939,36 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onNewDndEntryButtonPressed() {
+        errorMessage = none
         isNewDndEntry = true
         dndEntryItemIndex = -1
         Router.navigateTo(Screen.EditDNDentryScreen)
     }
 
     fun onEditDndEntryButtonPressed() {
+        errorMessage = none
         isNewDndEntry = false
         Router.navigateTo(Screen.EditDNDentryScreen)
     }
 
     fun onDeleteDndEntryButtonPressed() = viewModelScope.launch{
+        errorMessage = none
         //only allow delete of most recent entry
-        dndLogSheetEntries.removeAt(dndEntryItemIndex)
-        repo.deleteThisDndEntry(dndLogSheetEntries[dndEntryItemIndex])
+        dndLogSheetEntries.remove(dndLogSheetEntry)
+        try {
+            repo.deleteThisDndEntry(dndLogSheetEntry)
+        } catch (ex: Exception){ errorMessage = "$err viewmodel 956" }
         Router.navigateTo(Screen.DndLogSheetScreen)
     }
 
-    fun onSubmitDndEntryButtonPressed() = viewModelScope.launch{
+    fun onSubmitDndEntryButtonPressed(){
+        errorMessage = none
         var newEntry = dndLogSheetEntryBlank
         //get data from viewModel variables
         //change object in list
         //change Room
         if (isNewDndEntry) {// make a new entry and add it to the list
-            newEntry.logsheetID = logsheet_id
+            newEntry.logsheetID = dndLogSheet.id
             newEntry.adventureName = advname.value.toString()
             newEntry.adventureCode = advcode.value.toString()
             newEntry.profileID = myProfile.id
@@ -1099,12 +981,10 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
                 newEntry.startingPermanentMagicItems = (0).toString()
                 isNewDndLogSheet = false
             } else {
-                newEntry.startingLevel = getStartingLevel(dndLogSheet.id)
-                newEntry.startingGold = getStartingGold(dndLogSheet.id)//get total from last entry
-                newEntry.startingDowntime =
-                    getStartingDowntime(dndLogSheet.id)// get total from last entry
-                newEntry.startingPermanentMagicItems =
-                    getStartingMagicItems(dndLogSheet.id)// get total from last entry
+                newEntry.startingLevel = getStartingLevel()
+                newEntry.startingGold = getStartingGold()
+                newEntry.startingDowntime = getStartingDowntime()
+                newEntry.startingPermanentMagicItems = getStartingMagicItems()
             }
             newEntry.levelAccepted = "Y"
             newEntry.goldPlusMinus = goldplusminus.value.toString()
@@ -1112,15 +992,13 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
             newEntry.permanentMagicItemsPlusMinus = permanentmagicitemsplusminus.value.toString()
             newEntry.newClassLevel = newclass.value.toString()
             newEntry.newGoldTotal = getTotalGold(newEntry.startingGold, newEntry.goldPlusMinus)
-            newEntry.newDowntimeTotal =
-                getTotalDowntime(newEntry.startingDowntime, newEntry.downtimePlusMinus)
+            newEntry.newDowntimeTotal = getTotalDowntime(newEntry.startingDowntime, newEntry.downtimePlusMinus)
             newEntry.newPermanentMagicItemTotal = getTotalPermanentMagicItems(
                 newEntry.startingPermanentMagicItems,
                 newEntry.permanentMagicItemsPlusMinus
             )
             newEntry.adventureNotes = advnotes.value.toString()
-            repo.addNewDndEntry(newEntry)
-            dndLogSheetEntries.add(newEntry)
+            addNewDndEntry(newEntry)
         } else { // edit dndEntries[dndEntryItemIndex]
             if (advname.value.toString() != "") {
                 dndLogSheetEntries[dndEntryItemIndex].adventureName = advname.value.toString()
@@ -1151,9 +1029,22 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
             if (newclass.value.toString() != "") {
                 dndLogSheetEntries[dndEntryItemIndex].newClassLevel = newclass.value.toString()
             }
-            repo.updateThisDndEntry(dndLogSheetEntries[dndEntryItemIndex])
+            updateThisDndEntry(dndLogSheetEntries[dndEntryItemIndex])
         }
         Router.navigateTo(Screen.DndLogSheetScreen)
+    }
+
+    private fun addNewDndEntry(entry: DndAlEntry)=viewModelScope.launch{
+       try {
+           repo.addNewDndEntry(entry)
+       }catch (ex: Exception){errorMessage = "$err viewmodel 1136"}
+        dndLogSheetEntries.add(entry)
+    }
+
+    private fun updateThisDndEntry(entry: DndAlEntry)=viewModelScope.launch{
+        try {
+            repo.updateThisDndEntry(entry)
+        }catch (ex: Exception){errorMessage = "$err viewmodel 1143"}
     }
 
     //mtg log sheet stuff
@@ -1166,7 +1057,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     var mtgLogSheetEntries = mutableListOf<MtgEntry>()
     var mtgLogSheetEntryBlank = MtgEntry(0,0, 0, "","")
     var mtgLogSheetEntry = mtgLogSheetEntryBlank
-
+    var mtgLogSheetEntriesEmpty = mutableListOf<MtgEntry>()
     var mtgLogSheet = mtgLogSheetBlank
     var mtgLogSheetIndex = -1
     var mtgEntryItemIndex = -1
@@ -1190,32 +1081,25 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         _winner.value = winner
     }
 
-
-
-    private fun buildMtgLogSheets() = viewModelScope.launch {
-       try {
-           mtgLogSheets = repo.getAllMtgLogSheetsFor(myProfile.id) as MutableList<MTGlogsheet>
-       } catch (ex: Exception) {
-           errorMessage = R.string.errorhasoccurred.toString()
-       }
-    }
-
     fun onNewMtgLogSheetEntryButtonPressed() {
+        errorMessage = none
         mtgEntryItemIndex = -1
         isNewMtgEntry = true
-        newPlayersList.clear()
         Router.navigateTo(Screen.EditMTGentryScreen)
     }
 
     fun onEditMtgLogSheetButtonPressed() {
+        errorMessage = none
         isNewMtgLogSheet = false
         Router.navigateTo(Screen.EditMtgLogSheetScreen)
     }
 
     fun onDeleteMtgLogSheetButtonPressed()= viewModelScope.launch{
-        repo.deleteThisMtgLogSheet(mtgLogSheets[mtgLogSheetIndex])
-        repo.deleteThisLogSheet(logSheetList[logsheetItemIndex])
-        mtgLogSheets.removeAt(mtgLogSheetIndex)
+        errorMessage = none
+        try {
+            repo.deleteThisMtgLogSheet(mtgLogSheet)
+            repo.deleteThisLogSheet(logSheetList[logsheetItemIndex])
+        } catch (ex: Exception){ errorMessage = "$err viewmodel 1095" }
         logSheetList.removeAt(logsheetItemIndex)
         Router.navigateTo(Screen.LogSheetsScreen)
     }
@@ -1227,44 +1111,54 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onSubmitMtgLogSheetButtonPressed() = viewModelScope.launch{
+        errorMessage = none
         var newMtgLogSheet = mtgLogSheetBlank
         var newPlayers = playersBlank
         var newLogSheet = dummyLogSheet
         val separator = ";"
-        //playersString = newPlayers.value.toString()
-        try {
-            // create a LogSheet object
-            if (isNewMtgLogSheet){
-                newLogSheet.gameType = GameType().MTG
-                newLogSheet.profileID = myProfile.id
-                newLogSheet.dateCreated = dateCreated()
-                newMtgLogSheet.id = repo.addNewLogSheet(newLogSheet).toInt()
-                newPlayers.logsheetID = newMtgLogSheet.id
-                newPlayers.profileID = myProfile.id
-                newPlayers.members = newPlayersList.joinToString(separator)
-                newMtgLogSheet.playersID = repo.addNewPlayersForANewGame(newPlayers).toInt()
-                newMtgLogSheet.dayMonthYear = dateCreated()
-                newMtgLogSheet.gameType = newLogSheet.gameType
-                newMtgLogSheet.profileID = newPlayers.profileID
+        // create a LogSheet object
+        if (isNewMtgLogSheet){
+            newLogSheet.gameType = GameType().MTG
+            newLogSheet.profileID = myProfile.id
+            newLogSheet.dateCreated = dateCreated()
+            try {
+                newLogSheet.id = repo.addNewLogSheet(newLogSheet).toInt()
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1119" }
+            newPlayers.logsheetID = newLogSheet.id
+            newPlayers.profileID = newLogSheet.profileID
+            newPlayers.members = newPlayersList.joinToString(separator)
+            try {
+                newPlayers.id = repo.addNewPlayersForANewGame(newPlayers).toInt()
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1125" }
+            newMtgLogSheet.id = newLogSheet.id
+            newMtgLogSheet.playersID = newPlayers.id
+            newMtgLogSheet.dayMonthYear = dateCreated()
+            newMtgLogSheet.gameType = newLogSheet.gameType
+            newMtgLogSheet.profileID = newLogSheet.profileID
+            try {
                 repo.addNewMtgLogSheet(newMtgLogSheet)
-                mtgLogSheets.add(newMtgLogSheet)
-            } else {
-                newPlayers = repo.getPlayerObjectForThisGame(myProfile.id,mtgLogSheets[mtgLogSheetIndex].id)!!
-                newPlayers.members = newPlayersList.joinToString(separator)
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1127" }
+            mtgLogSheet = newMtgLogSheet
+            logSheetList.add(newLogSheet)
+        } else {
+            try {
+                newPlayers = repo.getPlayerObjectForThisGame(mtgLogSheet.profileID,mtgLogSheet.id)!!
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1133" }
+            newPlayers.members = newPlayersList.joinToString(separator)
+            try {
                 repo.updatePlayersForThisGame(newPlayers)
-                mtgLogSheets[mtgLogSheetIndex].playersID = newPlayers.id
-                repo.updateThisMtgLogSheet(mtgLogSheets[mtgLogSheetIndex])
-            }
-            isAddingNewPlayers = false
-        } catch (ex: java.lang.Exception){
-            errorMessage = R.string.errorhasoccurred.toString()
+                repo.updateThisMtgLogSheet(mtgLogSheet)
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1143" }
         }
+        isAddingNewPlayers = false
         Router.navigateTo(Screen.LogSheetsScreen)
     }
+
     //new mtg entry item
     var isNewMtgEntry = false
 
     fun onMtgEntryItemClicked(index: Int, count: Int) {
+        errorMessage = none
         mtgEntryItemIndex = index
         magicGameNumber = count
         mtgLogSheetEntry = mtgLogSheetEntries[index]
@@ -1272,11 +1166,13 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onEditMtgEntryButtonPressed() {
+        errorMessage = none
         isNewMtgEntry = false
         Router.navigateTo(Screen.EditMTGentryScreen)
     }
 
     fun onDeleteMtgEntryButtonPressed() = viewModelScope.launch{
+        errorMessage = none
         //delete from Room
         repo.deleteThisMtgEntry(mtgLogSheetEntry)
         // and local list
@@ -1285,25 +1181,29 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     fun onSubmitMtgEntryButtonPressed()= viewModelScope.launch {
+        errorMessage = none
         var newMagicEntry = mtgLogSheetEntryBlank
         if(isNewMtgEntry){
             // create a mtgEntry object
             newMagicEntry.dayMonthYear = dateCreated()
             newMagicEntry.logsheetID = logSheetItem.id
-            newMagicEntry.profileID = myProfile.id
-            newMagicEntry.winner = winner.toString().replace("\r",";")
+            newMagicEntry.profileID = logSheetItem.profileID
+            newMagicEntry.winner = winner.value.toString()
             // add it to Room
-            newMagicEntry.id = repo.addNewMtgEntry(newMagicEntry).toInt()
+            try {
+                newMagicEntry.id = repo.addNewMtgEntry(newMagicEntry).toInt()
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1187" }
             // add it to mtgEntriesList
             mtgLogSheetEntries.add(newMagicEntry)
             Router.navigateTo(Screen.MtgLogSheetScreen)
         } else {
             // update the mtgEntry object
-                mtgLogSheetEntry.winner =
-                    winner.toString().replace("\r",";")
+            mtgLogSheetEntry.winner = winner.value.toString().replace("\r",";")
+            try {
+                repo.updateThisMtgEntry(mtgLogSheetEntry)
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 1196" }
             // update the mtgEntriesList
-            mtgLogSheetEntries[mtgEntryItemIndex].winner =
-                winner.toString().replace("\r",";")
+            mtgLogSheetEntries[mtgEntryItemIndex].winner = mtgLogSheetEntry.winner
             Router.navigateTo(Screen.MtgEntryScreen)
         }
     }

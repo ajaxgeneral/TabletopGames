@@ -31,7 +31,7 @@ import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class NewReservation : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
-        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+        ViewModelFactory((application as MyApplication).repository)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,24 +49,25 @@ class NewReservation : ComponentActivity() {
 @Composable
 fun NewReservation(viewModel: MainViewModel){
     val scrollState: ScrollState = rememberScrollState()
-    var reservation = viewModel.reservationBlank
-    if (!viewModel.isNewReservation) {
-        reservation = viewModel.reservationsListOf[viewModel.reservationsItemIndex]
+    var gametypeq = remember { mutableStateOf("") }
+    var dayq = remember { mutableStateOf("") }
+    var monthq = remember { mutableStateOf("") }
+    var timeq = remember { mutableStateOf("") }
+    var tableq = remember { mutableStateOf("")}
+    var seatq = remember { mutableStateOf("") }
+    var durationq = remember { mutableStateOf("") }
+    var reserv = viewModel.reservationBlank
+    if (!viewModel.isNewReservation){
+        reserv = viewModel.reservation
+         gametypeq = remember { mutableStateOf(reserv.gameType) }
+         dayq = remember { mutableStateOf(reserv.dayMonthYear.substringBefore(" ")) }
+         monthq = remember { mutableStateOf(reserv.dayMonthYear.substringAfter(" ")
+             .substringBefore(" ")) }
+         timeq = remember { mutableStateOf(reserv.time) }
+         tableq = remember { mutableStateOf(reserv.gameTable)}
+         seatq = remember { mutableStateOf(reserv.seat) }
+         durationq = remember { mutableStateOf(reserv.duration) }
     }
-    val gametypeq = remember { mutableStateOf(reservation.gameType) }
-    val dayq = remember {
-        mutableStateOf(reservation.dayMonthYear
-            .substringBefore(" "))
-    }
-    val monthq = remember {
-        mutableStateOf(reservation.dayMonthYear
-            .substringAfter(" ").substringBefore(" "))
-    }
-    val timeq = remember { mutableStateOf(reservation.time) }
-    val tableq = remember { mutableStateOf(reservation.gameTable) }
-    val seatq = remember { mutableStateOf(reservation.seat) }
-    val durationq = remember { mutableStateOf(reservation.duration) }
-
 
     Column(modifier = Modifier.fillMaxWidth(1f).fillMaxSize(1f)
         .verticalScroll(scrollState)){

@@ -65,16 +65,20 @@ fun ReservationsListView(viewModel: MainViewModel) {
 @Composable
 fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
 
-    val reservations = rememberSaveable() { viewModel.reservationsListOf }
+    val reservations = if (viewModel.reservationsListOf.any()){
+        remember { viewModel.reservationsListOf }
+    } else { remember { viewModel.reservationListEmpty } }
 
     Column(modifier = Modifier.fillMaxWidth()
             .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally ) {
+
          reservations.forEach { reservation ->
             val img = viewModel.getImg(reservation.gameType)
             ListItem(img,reservation,viewModel,reservations.indexOf(reservation))
             Divider()
         }
+
         Row(modifier = Modifier.fillMaxWidth(),
             Arrangement.SpaceEvenly){
             TextButton(onClick = {
@@ -107,6 +111,7 @@ fun ReservationList(scrollState: ScrollState, viewModel: MainViewModel) {
                     color = Color.White
                 )
             }
+
         }
 
     }

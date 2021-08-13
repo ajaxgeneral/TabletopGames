@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MonopolyEntryDao {
     @Query("select * from MonopolyEntry where profileID = :profileID and logsheetID = :logsheetID")
-    fun getAllMonopolyEntriesFor(profileID:Int,logsheetID:Int) : List<MonopolyEntry>?
-
+    suspend fun getAllMonopolyEntriesFor(profileID:Int,logsheetID:Int) : List<MonopolyEntry>?
     @Insert
     suspend fun insert(monopolyEntry: MonopolyEntry)
     @Update

@@ -32,7 +32,7 @@ import com.example.tabletopgames.viewModels.ViewModelFactory
 
 class MyProfileView: ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
-        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+        ViewModelFactory((application as MyApplication).repository)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +68,21 @@ fun MyProfileView(viewModel: MainViewModel) {
             ) {
                 Text(
                     text = stringResource(id = R.string.editprofile),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onDeleteProfilePressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
                     color = Color.White
                 )
             }

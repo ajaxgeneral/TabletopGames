@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ClassesANDLevelsDao {
     @Query("select * from ClassesANDLevels where profileID = :profileID and logsheetID = :logsheetID")
-    fun getAllClassesFor(profileID: Int,logsheetID: Int) : List<ClassesANDLevels>?
+    suspend fun getAllClassesFor(profileID: Int,logsheetID: Int) : List<ClassesANDLevels>?
     @Insert
     suspend fun insert(classesANDlevels:ClassesANDLevels)
     @Update

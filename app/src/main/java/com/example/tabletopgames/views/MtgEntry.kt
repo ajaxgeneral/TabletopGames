@@ -41,17 +41,18 @@ class MtgEntry : ComponentActivity() {
 
 @Composable
 fun MtgEntryScreen(viewModel: MainViewModel) {
-    Column(modifier = Modifier.fillMaxWidth()){
+    Column(modifier = Modifier
+        .fillMaxWidth()){
         Row(
             modifier = Modifier.fillMaxWidth(),
             content = {
                 Text(
-                    viewModel.mtgLogSheetEntry.winner.replace(";","\r"),
+                    text = viewModel.mtgLogSheetEntry.winner,
                     fontSize = 20.sp, color = colorResource(R.color.colorPrimaryDark),
                     maxLines = 10
                 )
                 Text(
-                    stringResource(R.string.mtgentrywinnertext),
+                    text = " "+stringResource(R.string.mtgentrywinnertext)+" ",
                     fontSize = 20.sp, color = colorResource(R.color.colorPrimaryDark),
                 )
                 Text(
@@ -97,6 +98,24 @@ fun MtgEntryScreen(viewModel: MainViewModel) {
             ) {
                 Text(
                     text = stringResource(id = R.string.home),
+                    color = Color.White
+                )
+            }
+            TextButton(
+                onClick = {
+                    viewModel.onLogSheetsPressed()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =
+                    colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp, color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.logsheets),
                     color = Color.White
                 )
             }

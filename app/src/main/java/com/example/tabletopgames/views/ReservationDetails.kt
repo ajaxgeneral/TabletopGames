@@ -79,7 +79,22 @@ fun ReservationDetails(viewModel: MainViewModel) {
 
         }
         Row(modifier = Modifier.fillMaxWidth(),
-            Arrangement.SpaceEvenly){
+            Arrangement.SpaceAround){
+            TextButton(onClick = {
+                viewModel.onReservationsPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.reservations),
+                    color = Color.White
+                )
+            }
             TextButton(onClick = {
                 viewModel.onEditReservationButtonPressed()
             },
@@ -91,7 +106,23 @@ fun ReservationDetails(viewModel: MainViewModel) {
                 modifier = Modifier
             ) {
                 Text(
-                    text = stringResource(id = R.string.editreservation),
+                    text = stringResource(id = R.string.edit),
+                    color = Color.White
+                )
+            }
+
+            TextButton(onClick = {
+                viewModel.onDeleteReservationButtonPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
                     color = Color.White
                 )
             }
@@ -110,22 +141,8 @@ fun ReservationDetails(viewModel: MainViewModel) {
                     color = Color.White
                 )
             }
-            TextButton(onClick = {
-                viewModel.onDeleteReservationButtonPressed()
-            },
-                colors = ButtonDefaults.buttonColors(backgroundColor =
-                colorResource(id = R.color.comicred)),
-                border = BorderStroke(
-                    1.dp,color = colorResource(id = R.color.comicrose)
-                ),
-                modifier = Modifier
-            ) {
-                Text(
-                    text = stringResource(id = R.string.deletereservation),
-                    color = Color.White
-                )
-            }
         }
+
     }
 
     //Text(text = "Hello World! This is the Reservation Details View")

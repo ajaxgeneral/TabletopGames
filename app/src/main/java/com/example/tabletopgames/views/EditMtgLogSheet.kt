@@ -29,7 +29,7 @@ import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
 
 class EditMtgLogSheet : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels {
-        (application as MyApplication).repository?.let { ViewModelFactory(it) }!!
+        ViewModelFactory((application as MyApplication).repository)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -50,13 +50,14 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
     val scrollState = rememberScrollState()
     var logsheet = remember { viewModel.mtgLogSheetBlank }
     var playersList = remember { viewModel.playersListEmpty }
+    val newPlayers = remember { mutableStateOf("") }
     if(!viewModel.isNewMtgLogSheet){
-        logsheet = viewModel.mtgLogSheet
+        logsheet = remember { viewModel.mtgLogSheet }
     }
     if(viewModel.isAddingNewPlayers){
-        playersList = viewModel.newPlayersList
+        playersList = remember { viewModel.newPlayersList }
     }
-    val newPlayers = remember { mutableStateOf("") }
+
 
     Column(modifier = Modifier
         .padding(5.dp)
@@ -113,7 +114,25 @@ fun EditMtgLogSheetScreen(viewModel: MainViewModel) {
                 modifier = Modifier
             ) {
                 Text(
-                    text = stringResource(id = R.string.newentrybutton),
+                    text = stringResource(id = R.string.submitbutton),
+                    color = Color.White
+                )
+            }
+            TextButton(
+                onClick = {
+                    viewModel.onLogSheetsPressed()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor =
+                    colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp, color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.logsheets),
                     color = Color.White
                 )
             }

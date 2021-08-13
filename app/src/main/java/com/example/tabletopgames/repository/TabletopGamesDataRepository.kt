@@ -74,6 +74,7 @@ class TabletopGamesDataRepository(
         return dndAlLogSheetDao.getThisDndLogSheet(profileID,logsheetID)
     }
     suspend fun getAllDndLogSheetsFor(profileID: Int): List<DndAlLogSheet>? {
+        val logsheetList = dndAlLogSheetDao.getAllDndLogSheetsFor(profileID)
         return dndAlLogSheetDao.getAllDndLogSheetsFor(profileID)
     }
     suspend fun addNewDndLogSheet(dndAlLogSheet: DndAlLogSheet){
@@ -87,11 +88,11 @@ class TabletopGamesDataRepository(
     }
     // dnd logsheet entry functions
     suspend fun getAllDndEntriesForThisPC(profileID: Int, logsheetID: Int): List<DndAlEntry>? {
-        return dndAlEntryDao.getAllDndEntriesForThisPC(profileID,logsheetID)
+        return dndAlEntryDao.getDndEntriesFor(profileID,logsheetID)
     }
 
     suspend fun deleteAllDndEntriesFor(profileID: Int, logsheetID: Int){
-        deleteAllDndEntriesFor(profileID,logsheetID)
+        dndAlEntryDao.deleteAllDndEntriesFor(profileID,logsheetID)
     }
 
     suspend fun addNewDndEntry(dndAlEntry: DndAlEntry){
@@ -128,12 +129,10 @@ class TabletopGamesDataRepository(
         val mtgEntries = mtgEntryDao.getAllMtgEntriesFor(profileID,logsheetID)
         var lastEntry = mtgEntries?.get(0)
         var thisEntry = mtgEntries?.get(0)
-        if (mtgEntries != null) {
-            mtgEntries.forEach{ entry ->
-                if (entry.dayMonthYear> thisEntry!!.dayMonthYear ){
-                    lastEntry = entry
-                    thisEntry = entry
-                }
+        mtgEntries?.forEach{ entry ->
+            if (entry.dayMonthYear> thisEntry!!.dayMonthYear ){
+                lastEntry = entry
+                thisEntry = entry
             }
         }
         return lastEntry
@@ -153,7 +152,7 @@ class TabletopGamesDataRepository(
             *
             * */
     // players functions
-    fun getPlayerObjectForThisGame(profileID: Int, logsheetID: Int): Players? {
+    suspend fun getPlayerObjectForThisGame(profileID: Int, logsheetID: Int): Players? {
         return playersDao.getPlayersForThis(profileID,logsheetID)
     }
     suspend fun addNewPlayersForANewGame(players: Players): Long{
