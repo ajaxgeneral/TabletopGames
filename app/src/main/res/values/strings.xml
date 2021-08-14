@@ -168,4 +168,6 @@
     <string name="reservationexists">This reservations exists. Please try again.</string>
     <string name="comingsoon">This feature is coming soon!</string>
     <string name="logout">Logout</string>
+    <string name="phone_text_view_label">Phone</string>
+    <string name="dndormtg">Dungeons and Dragons  or Magic the Gathering?</string>
 </resources>

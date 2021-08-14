@@ -157,6 +157,10 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         _password.value = newPassword
     }
 
+    fun onGoToLoginPressed(){
+        Router.navigateTo(Screen.LoginScreen)
+    }
+
     fun onLogoutPressed(){
         errorMessage = none
         loggedIn = false
@@ -388,8 +392,10 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     *       may not begin nor end during an existing reservation's
     *       timeBlock(i.e. startTime,endTime,duration)
     * */
+    val cal: Calendar = Calendar.getInstance()
     var reservationsItemIndex = -1
-    var isNewReservation = true
+    var isNewReservation = false
+    var validRes = false
     private val _gametype = MutableLiveData("")
     val gametype: LiveData<String> = _gametype
     private val _day = MutableLiveData("")
@@ -409,12 +415,12 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         0, 0, "",
         "", "", "", "", ""
     )
-    var dummyReservation = Reservation(0,0,GameType().DND,dateCreated(),
-            "12:00 AM","1","2","4")
     var reservation = reservationBlank
     val reservationListEmpty = mutableListOf<Reservation>()
     var reservationsListOf = reservationListEmpty
     private var reservationExists = false
+
+
 
     fun onGameTypeChange(gameType: String) {
         _gametype.value = gameType
@@ -445,7 +451,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
     }
 
     private fun getNewResYear(day: String, month: String): Int {
-        val cal: Calendar = Calendar.getInstance()
+
         val today: Int = cal.get(Calendar.DAY_OF_MONTH)
         val thisMonth: Int = cal.get(Calendar.MONTH) + 1
         val thisYear: Int = cal.get(Calendar.YEAR)
@@ -465,84 +471,69 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         errorMessage = none
         val dayV = day.value.toString()
         val monthV = month.value.toString()
-        val year = getNewResYear(dayV, monthV)
-        val dayMonthYear = dayV + " " + getMonthName(monthV) + " " + year.toString()
+        val year = if (dayV != "" && monthV != ""){
+            getNewResYear(dayV, monthV)
+        } else { cal.get(Calendar.YEAR) }
+        val thisDayMonthYear = dayV + " " + getMonthName(monthV) + " " + year.toString()
 
-        if (isNewReservation) {
-            if(isValidReservation()){
-                reservation.gameType = gametype.value.toString()
-                reservation.dayMonthYear = dayMonthYear
-                reservation.time = time.value.toString()
-                reservation.gameTable = table.value.toString()
-                reservation.seat = seat.value.toString()
-                reservation.duration = duration.value.toString()
-                reservation.profileID = myProfile.id
-                //if no reservation with this date, time, and location exists
-                //then add to Reservation Realm and add to reservationsListOf
-                var reservationSearchResults: List<Reservation>? = null
-                    try {
-                        reservationSearchResults = repo.thisDaysReservationsFor(reservation.dayMonthYear,reservation.gameTable,reservation.seat)!!
-                    } catch (ex: Exception){ errorMessage = "$err viewmodel 479" }
-                // compare newReservation to seatingChart to see if it fits
-                // if not send suggestions message
-                reservationSearchResults?.forEach{ existingReservation ->
-                    if (existingReservation.dayMonthYear==reservation.dayMonthYear &&
-                        existingReservation.gameTable==reservation.gameTable &&
-                        existingReservation.seat==reservation.seat &&
-                        existingReservation.time==reservation.time){
-                        reservationExists=true
-                    }
-                }
-                if (reservationExists) {
-                    errorMessage = errres
-                    Router.navigateTo(Screen.NewReservationScreen)
-                } else {
-                   try {
-                       repo.addNewReservation(reservation)
-                       reservationsListOf.add(reservation)
-                   } catch (ex: Exception){ errorMessage = "$err viewmodel 502"}
-                    // send details message to Admin of success
-                    // update reservation seating chart
+        // build reservation object
+        reservation.profileID = myProfile.id
+        reservation.gameType = gametype.value.toString()
+        reservation.dayMonthYear = thisDayMonthYear
+        reservation.gameTable = table.value.toString()
+        reservation.seat = seat.value.toString()
+        reservation.time = time.value.toString()
+        reservation.duration = duration.value.toString()
 
-                    Router.navigateTo(Screen.ReservationsScreen)
-                }
-            } else {
-                errorMessage = noblanks
-                Router.navigateTo(Screen.NewReservationScreen)
-            }
-        } else {
-            if (gametype.value != "") {
-                reservationsListOf[reservationsItemIndex].gameType = gametype.value.toString()
-            }
-            if (dayMonthYear != "") {
-                reservationsListOf[reservationsItemIndex].dayMonthYear = dayMonthYear
-            }
-            if (table.value != "") {
-                reservationsListOf[reservationsItemIndex].gameTable = table.value.toString()
-            }
-            if (seat.value != "") {
-                reservationsListOf[reservationsItemIndex].seat = seat.value.toString()
-            }
-            if (duration.value != "") {
-                reservationsListOf[reservationsItemIndex].duration = duration.value.toString()
-            }
-            if (time.value != "") {
-                reservationsListOf[reservationsItemIndex].time = time.value.toString()
-            }
-            errorMessage = try {
-                repo.updateThisReservation(reservationsListOf[reservationsItemIndex])
-                none
-            } catch (ex: Exception){ err }
-            if (errorMessage == err){
-                Router.navigateTo(Screen.NewReservationScreen)
-            }
+        // is a valid reservation(no blank fields)
+        validRes = isValidReservation()
+
+        // add it to Room if its a new reservation and valid
+        if (isNewReservation && validRes){
+            try {
+                reservation.id = repo.addNewReservation(reservation).toInt()
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 503" }
+            // add it the list of reservations
+            reservationsListOf.add(reservation)
+            // navigate to Reservations Screen
             Router.navigateTo(Screen.ReservationsScreen)
         }
+        // if this is not a new Reservation, then update this reservation
+        if (!isNewReservation){
+            // update this reservation
+            if (gametype.value.toString()!=""){
+                reservation.gameType = gametype.value.toString()
+            }
+            if (day.value.toString() != "" && month.value.toString() != ""){
+                reservation.dayMonthYear = thisDayMonthYear
+            }
+            if (table.value.toString()!=""){
+                reservation.gameTable = table.value.toString()
+            }
+            if (seat.value.toString()!=""){
+                reservation.seat = seat.value.toString()
+            }
+            if (time.value.toString()!=""){
+                reservation.time = time.value.toString()
+            }
+            if (duration.value.toString()!=""){
+                reservation.duration = duration.value.toString()
+            }
+            try {
+                repo.updateThisReservation(reservation)
+            } catch (ex: Exception){ errorMessage = "$err viewmodel 514" }
+            // navigate to Reservations Screen
+            Router.navigateTo(Screen.ReservationsScreen)
+        }
+        //Router.navigateTo(Screen.HomeScreen)
     }
+
+
 
     private fun isValidReservation(): Boolean {
         var isValidReservation = true
-        if (gametype.value == "") {
+
+        if(gametype.value == ""){
             isValidReservation = false
         }
         if (table.value == "") {
@@ -557,8 +548,8 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         if (time.value == "") {
             isValidReservation = false
         }
-        errorMessage = if (!isValidReservation){ noblanks }
-                        else { none }
+        errorMessage = if (isValidReservation){ none }
+                        else { noblanks }
         return isValidReservation
     }
 
@@ -647,7 +638,7 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
         try {
             logSheetList = repo.getLogSheetsFor(myProfile.id)?.toMutableList()!!
         } catch (ex: Exception){
-            errorMessage = "$err viewModel656"
+            errorMessage = "$err viewModel 641"
         }
     }
 
@@ -1001,49 +992,51 @@ open class MainViewModel(private val repo: TabletopGamesDataRepository) : ViewMo
             addNewDndEntry(newEntry)
         } else { // edit dndEntries[dndEntryItemIndex]
             if (advname.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].adventureName = advname.value.toString()
+                dndLogSheetEntry.adventureName = advname.value.toString()
             }
             if (advname.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].adventureCode = advcode.value.toString()
+                dndLogSheetEntry.adventureCode = advcode.value.toString()
             }
             if (dmdcinumber.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].dmDCInumber = dmdcinumber.value.toString()
+                dndLogSheetEntry.dmDCInumber = dmdcinumber.value.toString()
             }
             if (goldplusminus.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].goldPlusMinus = goldplusminus.value.toString()
-                dndLogSheetEntries[dndEntryItemIndex].newGoldTotal =
-                    (dndLogSheetEntries[dndEntryItemIndex].startingGold.toInt() + newEntry.goldPlusMinus.toInt()).toString()
+                dndLogSheetEntry.goldPlusMinus = goldplusminus.value.toString()
+                dndLogSheetEntry.newGoldTotal =
+                    (dndLogSheetEntry.startingGold.toInt() + dndLogSheetEntry.goldPlusMinus.toInt()).toString()
             }
             if (downtimeplusminus.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].downtimePlusMinus =
+                dndLogSheetEntry.downtimePlusMinus =
                     downtimeplusminus.value.toString()
-                dndLogSheetEntries[dndEntryItemIndex].newDowntimeTotal =
-                    (dndLogSheetEntries[dndEntryItemIndex].startingDowntime.toInt() + newEntry.downtimePlusMinus.toInt()).toString()
+                dndLogSheetEntry.newDowntimeTotal =
+                    (dndLogSheetEntry.startingDowntime.toInt() + dndLogSheetEntry.downtimePlusMinus.toInt()).toString()
             }
             if (permanentmagicitemsplusminus.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].permanentMagicItemsPlusMinus =
+                dndLogSheetEntry.permanentMagicItemsPlusMinus =
                     permanentmagicitemsplusminus.value.toString()
-                dndLogSheetEntries[dndEntryItemIndex].newPermanentMagicItemTotal =
-                    (dndLogSheetEntries[dndEntryItemIndex].startingPermanentMagicItems.toInt() + newEntry.permanentMagicItemsPlusMinus.toInt()).toString()
+                dndLogSheetEntry.newPermanentMagicItemTotal =
+                    (dndLogSheetEntry.startingPermanentMagicItems.toInt() + dndLogSheetEntry.permanentMagicItemsPlusMinus.toInt()).toString()
             }
             if (newclass.value.toString() != "") {
-                dndLogSheetEntries[dndEntryItemIndex].newClassLevel = newclass.value.toString()
+                dndLogSheetEntry.newClassLevel = newclass.value.toString()
             }
-            updateThisDndEntry(dndLogSheetEntries[dndEntryItemIndex])
+            updateThisDndEntry(dndLogSheetEntry)
         }
         Router.navigateTo(Screen.DndLogSheetScreen)
     }
 
     private fun addNewDndEntry(entry: DndAlEntry)=viewModelScope.launch{
        try {
-           repo.addNewDndEntry(entry)
+           dndLogSheetEntry.id = repo.addNewDndEntry(entry).toInt()
+           dndLogSheetEntries.add(entry)
        }catch (ex: Exception){errorMessage = "$err viewmodel 1136"}
-        dndLogSheetEntries.add(entry)
+
     }
 
     private fun updateThisDndEntry(entry: DndAlEntry)=viewModelScope.launch{
         try {
             repo.updateThisDndEntry(entry)
+            dndLogSheetEntries[dndLogSheetItemIndex] = dndLogSheetEntry
         }catch (ex: Exception){errorMessage = "$err viewmodel 1143"}
     }
 

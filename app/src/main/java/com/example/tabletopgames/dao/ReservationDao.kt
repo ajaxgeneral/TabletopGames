@@ -24,7 +24,7 @@ interface ReservationDao {
 
 
     @Insert
-    suspend fun insert(reservation: Reservation)
+    suspend fun insert(reservation: Reservation):Long
     @Update
     suspend fun update(reservation: Reservation)
     @Delete

@@ -1,6 +1,8 @@
 package com.example.tabletopgames.views
 
+import android.content.Context
 import android.os.Bundle
+import android.widget.RadioGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -10,10 +12,12 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,9 +26,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tabletopgames.MyApplication
 import com.example.tabletopgames.R
+import com.example.tabletopgames.models.GameType
+import com.example.tabletopgames.models.RadioState
 import com.example.tabletopgames.viewModels.MainViewModel
 import com.example.tabletopgames.viewModels.ViewModelFactory
 import com.example.tabletopgames.views.ui.theme.TabletopGamesTheme
@@ -49,6 +59,8 @@ class NewReservation : ComponentActivity() {
 @Composable
 fun NewReservation(viewModel: MainViewModel){
     val scrollState: ScrollState = rememberScrollState()
+
+
     var gametypeq = remember { mutableStateOf("") }
     var dayq = remember { mutableStateOf("") }
     var monthq = remember { mutableStateOf("") }
@@ -69,10 +81,13 @@ fun NewReservation(viewModel: MainViewModel){
          durationq = remember { mutableStateOf(reserv.duration) }
     }
 
-    Column(modifier = Modifier.fillMaxWidth(1f).fillMaxSize(1f)
+    Column(
+        modifier = Modifier.fillMaxWidth(1f).fillMaxSize(1f)
         .verticalScroll(scrollState)){
-        Text(stringResource(R.string.gametobeplayed))
-       TextField(
+        if(viewModel.errorMessage!="none"){ Text(viewModel.errorMessage) }
+        Text(stringResource(R.string.dndormtg))
+
+        TextField(
            value = gametypeq.value,
            onValueChange = {
                gametypeq.value = it
@@ -81,6 +96,7 @@ fun NewReservation(viewModel: MainViewModel){
            label = {  },
            modifier = Modifier.fillMaxWidth()
        )
+
         Divider()
         Text(stringResource(R.string.day1to31) )
         TextField(
@@ -185,6 +201,32 @@ fun NewReservation(viewModel: MainViewModel){
     //Text("Hello World! This is a New Reservation.")
     BackHandler {
         viewModel.backButton()
+    }
+}
+
+@Composable
+fun GameTypeRadioGroup(viewModel: MainViewModel){
+    val radioButtons = listOf<String>(GameType().DND,GameType().MTG)
+
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioButtons[0]) }
+
+    Row{
+        radioButtons.forEach{ text ->
+            Row(
+                Modifier.selectable(selected = (text == selectedOption),
+                    onClick = { onOptionSelected(text)})
+            ){
+                RadioButton(
+                    selected = (text == selectedOption),
+                    modifier = Modifier.padding(3.dp),
+                    onClick = {
+                        onOptionSelected(text)
+                        viewModel.onGameTypeChange(text)
+                    }
+                )
+                Text(text = text,fontSize = 15.sp)
+            }
+        }
     }
 }
 

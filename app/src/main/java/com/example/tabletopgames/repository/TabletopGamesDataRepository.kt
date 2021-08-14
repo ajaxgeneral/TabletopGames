@@ -95,8 +95,8 @@ class TabletopGamesDataRepository(
         dndAlEntryDao.deleteAllDndEntriesFor(profileID,logsheetID)
     }
 
-    suspend fun addNewDndEntry(dndAlEntry: DndAlEntry){
-        dndAlEntryDao.insert(dndAlEntry)
+    suspend fun addNewDndEntry(dndAlEntry: DndAlEntry) : Long {
+        return dndAlEntryDao.insert(dndAlEntry)
     }
     suspend fun updateThisDndEntry(dndAlEntry: DndAlEntry){
         dndAlEntryDao.update(dndAlEntry)
@@ -190,8 +190,8 @@ class TabletopGamesDataRepository(
     suspend fun getReservationsByDuration(duration: String){
         reservationDao.getReservationsByDuration(duration)
     }
-    suspend fun addNewReservation(reservation: Reservation){
-        reservationDao.insert(reservation)
+    suspend fun addNewReservation(reservation: Reservation): Long {
+        return reservationDao.insert(reservation)
     }
     suspend fun updateThisReservation(reservation: Reservation){
         reservationDao.update(reservation)

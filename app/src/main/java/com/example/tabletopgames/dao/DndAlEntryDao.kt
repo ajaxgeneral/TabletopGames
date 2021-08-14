@@ -11,7 +11,7 @@ interface DndAlEntryDao {
     @Query("select * from DndAlEntry where profileID = :profileID and logsheetID = :logsheetID ")
     suspend fun getDndEntriesFor(profileID: Int, logsheetID: Int) : List<DndAlEntry>?
     @Insert
-    suspend fun insert(dndAlEntry: DndAlEntry)
+    suspend fun insert(dndAlEntry: DndAlEntry) : Long
     @Update
     suspend fun update(dndAlEntry: DndAlEntry)
     @Delete

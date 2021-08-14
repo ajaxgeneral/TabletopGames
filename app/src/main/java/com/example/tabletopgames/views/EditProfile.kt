@@ -57,6 +57,7 @@ fun EditProfile(viewModel: MainViewModel) {
     var scope = rememberCoroutineScope()
     var profile = viewModel.profileBlank
     var login = viewModel.loginBlank
+
     var firstNameq = remember{ mutableStateOf("") }
     var lastNameq = remember{ mutableStateOf("") }
     var emailq = remember{ mutableStateOf("") }
@@ -87,7 +88,7 @@ fun EditProfile(viewModel: MainViewModel) {
             firstNameq.value = it
             viewModel.onFirstNameChange(firstNameq.value)
         },
-        label = { Text(viewModel.myProfile.firstName) },
+        label = { Text(stringResource(R.string.firstName_text_view_label)) },
         modifier = Modifier.fillMaxWidth()
         )
         TextField(
@@ -96,7 +97,7 @@ fun EditProfile(viewModel: MainViewModel) {
             lastNameq.value = it
             viewModel.onLastNameChange(lastNameq.value)
         },
-        label = { Text(viewModel.myProfile.lastName) },
+        label = { Text(stringResource(R.string.lastName_text_view_label)) },
         modifier = Modifier.fillMaxWidth()
         )
         TextField(
@@ -105,7 +106,7 @@ fun EditProfile(viewModel: MainViewModel) {
             emailq.value = it
             viewModel.onEmailChange(emailq.value)
         },
-        label = { Text(viewModel.myProfile.email) },
+        label = { Text(stringResource(R.string.email_text_view_label)) },
         modifier = Modifier.fillMaxWidth()
         )
         TextField(
@@ -114,7 +115,7 @@ fun EditProfile(viewModel: MainViewModel) {
             phoneq.value = it
             viewModel.onPhoneChange(phoneq.value)
         },
-        label = { Text(viewModel.myProfile.phone) },
+        label = { Text(stringResource(R.string.phone_text_view_label)) },
         modifier = Modifier.fillMaxWidth()
         )
         TextField(
@@ -123,9 +124,7 @@ fun EditProfile(viewModel: MainViewModel) {
             passwordq.value = it
             viewModel.onPasswordChange(passwordq.value)
         },
-        label = { if(!viewModel.isNewLogin)Text(viewModel.myLogin.password)else{
-            Text(stringResource(R.string.password))
-        } },
+        label = { Text(stringResource(R.string.password)) },
         modifier = Modifier.fillMaxWidth()
     )
         Row(modifier = Modifier.fillMaxWidth(),
@@ -171,6 +170,22 @@ fun EditProfile(viewModel: MainViewModel) {
             ) {
                 Text(
                     text = stringResource(id = R.string.delete),
+                    color = Color.White
+                )
+            }
+            TextButton(onClick = {
+                viewModel.onGoToLoginPressed()
+            },
+                colors = ButtonDefaults.buttonColors(backgroundColor =
+                colorResource(id = R.color.comicred)
+                ),
+                border = BorderStroke(
+                    1.dp,color = colorResource(id = R.color.comicrose)
+                ),
+                modifier = Modifier
+            ) {
+                Text(
+                    text = stringResource(id = R.string.login),
                     color = Color.White
                 )
             }
